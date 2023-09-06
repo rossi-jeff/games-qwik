@@ -1,6 +1,7 @@
 import { component$, useTask$, $, useSignal } from '@builder.io/qwik'
 import { RestClient } from '../../../lib/rest-client'
 import type { CodeBreaker } from '../../../types/code-breaker.type'
+import { PaginationControls } from '../../../components/pagination-controls/pagination-controls'
 
 export default component$(() => {
 	const path = 'api/code_breaker'
@@ -16,6 +17,27 @@ export default component$(() => {
 			return await req.json()
 		}
 	)
+
+	const limitChanged = $(async (l: number) => {
+		limit.value = l
+		offset.value = 0
+		const params = { Limit: limit.value, Offset: offset.value }
+		const data = await loadData(path, params)
+		count.value = data.Count
+		limit.value = data.Limit
+		offset.value = data.Offset
+		items.value = data.Items
+	})
+
+	const pageChanged = $(async (p: number) => {
+		offset.value = (p - 1) * limit.value
+		const params = { Limit: limit.value, Offset: offset.value }
+		const data = await loadData(path, params)
+		count.value = data.Count
+		limit.value = data.Limit
+		offset.value = data.Offset
+		items.value = data.Items
+	})
 
 	useTask$(async () => {
 		const params = { Limit: limit.value, Offset: offset.value }
@@ -48,6 +70,13 @@ export default component$(() => {
 					</div>
 				))}
 			</div>
+			<PaginationControls
+				count={count.value}
+				limit={limit.value}
+				offset={offset.value}
+				limitChanged={limitChanged}
+				pageChanged={pageChanged}
+			/>
 		</div>
 	)
 })
