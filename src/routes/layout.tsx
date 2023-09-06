@@ -17,7 +17,9 @@ export default component$(() => {
   return (
     <div>
       <Navigation />
-      <Slot />
+      <div class="p-2">
+        <Slot />
+      </div>
     </div>
   );
 });
