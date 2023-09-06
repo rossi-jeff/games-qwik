@@ -33,3 +33,7 @@ body {
 .cell-20-right {
 	@apply w-20 text-right;
 }
+
+.cell-32-right {
+	@apply w-32 text-right;
+}
