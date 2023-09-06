@@ -4,6 +4,7 @@ export class RestClient {
     'Content-Type': 'application/json',
     Accept: 'application/json',
   };
+	
 	private mergeHeaders(headers?: { [key: string]: string }) {
 		if (!headers) headers = {}
 		for (const key in this.headers) {
