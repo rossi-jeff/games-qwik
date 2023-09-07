@@ -1,20 +1,21 @@
-import { component$ } from "@builder.io/qwik";
-import type { CodeBreakerGuess as CBG } from "~/types/code-breaker-guess.type";
-import { CodeBreakerGuess } from "../code-breaker-guess/code-breaker-guess";
+import { component$ } from '@builder.io/qwik'
+import type { CodeBreakerGuess as CBG } from '~/types/code-breaker-guess.type'
+import { CodeBreakerGuess } from '../code-breaker-guess/code-breaker-guess'
 
 export interface CodeBreakerGuessListProps {
-  guesses: CBG[];
+	guesses: CBG[]
 }
 
 export const CodeBreakerGuessList = component$<CodeBreakerGuessListProps>(
-  (props) => {
-    const { guesses } = props;
-    return (
-      <div>
-        {guesses.map((guess) => (
-          <CodeBreakerGuess key={guess.id} guess={guess} />
-        ))}
-      </div>
-    );
-  }
-);
+	(props) => {
+		const { guesses } = props
+		return (
+			<div>
+				<h1>Guesses</h1>
+				{guesses.map((guess) => (
+					<CodeBreakerGuess key={guess.id} guess={guess} />
+				))}
+			</div>
+		)
+	}
+)
