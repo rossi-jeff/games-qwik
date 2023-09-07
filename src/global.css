@@ -7,33 +7,98 @@
 @tailwind utilities;
 
 body {
-	@apply m-0 p-0;
+  @apply m-0 p-0;
 }
 
 .score-list {
-	@apply border border-black rounded p-2;
+  @apply border border-black rounded p-2;
 }
 
 .score-header {
-	@apply flex flex-wrap justify-between py-1 px-2 bg-black text-white font-bold;
+  @apply flex flex-wrap justify-between py-1 px-2 bg-black text-white font-bold;
 }
 
 .score-row {
-	@apply flex flex-wrap justify-between border-b border-black border-dashed py-1 px-2;
+  @apply flex flex-wrap justify-between border-b border-black border-dashed py-1 px-2;
 }
 
 .cell-48-left {
-	@apply w-48 text-left;
+  @apply w-48 text-left;
 }
 
 .cell-20-center {
-	@apply w-20 text-center;
+  @apply w-20 text-center;
 }
 
 .cell-20-right {
-	@apply w-20 text-right;
+  @apply w-20 text-right;
 }
 
 .cell-32-right {
-	@apply w-32 text-right;
+  @apply w-32 text-right;
+}
+
+.code-breaker-color-options,
+.code-breaker-guess-colors,
+.code-breaker-guess-keys {
+  @apply flex flex-wrap;
+}
+
+.code-breaker-color-options div {
+  @apply mr-3 px-2 py-1 rounded border font-bold;
+}
+
+.code-breaker-guess-colors div {
+  @apply w-8 h-8 border rounded-full mr-4;
+}
+
+.code-breaker-guess-keys div {
+  @apply w-4 h-4 border rounded-full mr-2;
+}
+
+.code-breaker-color-options div.Black,
+.code-breaker-guess-colors div.Black,
+.code-breaker-guess-keys div.Black {
+  @apply border-black bg-black text-white;
+}
+
+.code-breaker-color-options div.Blue,
+.code-breaker-guess-colors div.Blue {
+  @apply border-blue-900 bg-blue-700 text-white;
+}
+
+.code-breaker-color-options div.Brown,
+.code-breaker-guess-colors div.Brown {
+  @apply border-amber-900 bg-amber-700 text-white;
+}
+
+.code-breaker-color-options div.Green,
+.code-breaker-guess-colors div.Green {
+  @apply border-green-900 bg-green-400 text-black;
+}
+
+.code-breaker-color-options div.Orange,
+.code-breaker-guess-colors div.Orange {
+  @apply bg-orange-400 border-orange-900 text-black;
+}
+
+.code-breaker-color-options div.Purple,
+.code-breaker-guess-colors div.Purple {
+  @apply bg-purple-700 border-purple-900 text-white;
+}
+
+.code-breaker-color-options div.Red,
+.code-breaker-guess-colors div.Red {
+  @apply bg-red-600 border-red-900 text-white;
+}
+
+.code-breaker-color-options div.White,
+.code-breaker-guess-colors div.White,
+.code-breaker-guess-keys div.White {
+  @apply bg-white border-black text-black;
+}
+
+.code-breaker-color-options div.Yellow,
+.code-breaker-guess-colors div.Yellow {
+  @apply bg-yellow-300 border-yellow-900 text-black;
 }
