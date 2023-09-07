@@ -2,6 +2,7 @@ import { component$, useTask$, $, useSignal } from '@builder.io/qwik'
 import { RestClient } from '../../../lib/rest-client'
 import type { CodeBreaker } from '../../../types/code-breaker.type'
 import { PaginationControls } from '../../../components/pagination-controls/pagination-controls'
+import { Link } from '@builder.io/qwik-city'
 
 export default component$(() => {
 	const path = 'api/code_breaker'
@@ -52,6 +53,7 @@ export default component$(() => {
 			<h1>Code Breaker Scores</h1>
 			<div class="score-list">
 				<div class="score-header">
+					<div class="cell-10-left"></div>
 					<div class="cell-48-left">User</div>
 					<div class="cell-20-center">Status</div>
 					<div class="cell-20-center">Score</div>
@@ -60,6 +62,9 @@ export default component$(() => {
 				</div>
 				{items.value.map((cb) => (
 					<div key={cb.id} class="score-row">
+						<div class="cell-10-left">
+							<Link href={'/code_breaker/scores/' + cb.id}>View</Link>
+						</div>
 						<div class="cell-48-left">
 							{cb.user ? cb.user.UserName : 'Anonymous'}
 						</div>

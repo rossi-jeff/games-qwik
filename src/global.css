@@ -37,3 +37,83 @@ body {
 .cell-32-right {
 	@apply w-32 text-right;
 }
+
+.cell-10-left {
+	@apply w-10 text-left;
+}
+
+.code-breaker-color-options,
+.code-breaker-guess-colors,
+.code-breaker-guess-keys,
+.code-breaker-solution {
+	@apply flex flex-wrap;
+}
+
+.code-breaker-color-options div {
+	@apply mr-3 px-2 py-1 rounded border font-bold;
+}
+
+.code-breaker-guess-colors div,
+.code-breaker-solution div {
+	@apply w-8 h-8 border rounded-full mr-4;
+}
+
+.code-breaker-guess-keys div {
+	@apply w-4 h-4 border rounded-full mr-2;
+}
+
+.code-breaker-color-options div.Black,
+.code-breaker-guess-colors div.Black,
+.code-breaker-guess-keys div.Black,
+.code-breaker-solution div.Black {
+	@apply border-black bg-black text-white;
+}
+
+.code-breaker-color-options div.Blue,
+.code-breaker-guess-colors div.Blue,
+.code-breaker-solution div.Blue {
+	@apply border-blue-900 bg-blue-700 text-white;
+}
+
+.code-breaker-color-options div.Brown,
+.code-breaker-guess-colors div.Brown,
+.code-breaker-solution div.Brown {
+	@apply border-amber-900 bg-amber-700 text-white;
+}
+
+.code-breaker-color-options div.Green,
+.code-breaker-guess-colors div.Green,
+.code-breaker-solution div.Green {
+	@apply border-green-900 bg-green-400 text-black;
+}
+
+.code-breaker-color-options div.Orange,
+.code-breaker-guess-colors div.Orange,
+.code-breaker-solution div.Orange {
+	@apply bg-orange-400 border-orange-900 text-black;
+}
+
+.code-breaker-color-options div.Purple,
+.code-breaker-guess-colors div.Purple,
+.code-breaker-solution div.Purple {
+	@apply bg-purple-700 border-purple-900 text-white;
+}
+
+.code-breaker-color-options div.Red,
+.code-breaker-guess-colors div.Red,
+.code-breaker-solution div.Red {
+	@apply bg-red-600 border-red-900 text-white;
+}
+
+.code-breaker-color-options div.White,
+.code-breaker-guess-colors div.White,
+.code-breaker-guess-keys div.White,
+.code-breaker-solution div.White {
+	@apply bg-white border-black text-black;
+}
+
+.code-breaker-color-options div.Yellow,
+.code-breaker-guess-colors div.Yellow,
+.code-breaker-solution div.Yellow {
+	@apply bg-yellow-300 border-yellow-900 text-black;
+}
