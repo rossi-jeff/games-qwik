@@ -1,13 +1,159 @@
-import { component$ } from '@builder.io/qwik';
-import { Link } from '@builder.io/qwik-city';
+import { component$, useSignal, $, useStore, useTask$ } from '@builder.io/qwik'
+import { Link } from '@builder.io/qwik-city'
+import type { GuessWord } from '../../types/guess-word.type'
+import { GuessWordOptions } from '../../components/guess-word-options/guess-word-options'
+import type { Word } from '../../types/word.type'
+import { RestClient } from '../../lib/rest-client'
+import { GuessWordGuessForm } from '../../components/guess-word-guess-form/guess-word-guess-form'
+import { GuessWordGuessList } from '../../components/guess-word-guess-list/guess-word-guess-list'
+import type { HintArgsType } from '../../types/hint-args.type'
+import { GuessWordHintList } from '../../components/guess-word-hint-list/guess-word-hint-list'
 
 export default component$(() => {
-  return (
-    <div>
-      Guess Word works.
-      <div>
-        <Link href="/guess_word/scores">Top Scores</Link>
-      </div>
-    </div>
-  );
-});
+	const game = useSignal<GuessWord>({})
+	const word = useSignal<Word>({})
+	const length = useSignal(5)
+	const hints = useSignal<string[]>([])
+	const hintArgs = useStore<HintArgsType>({
+		Length: 5,
+		Gray: [],
+		Green: [],
+		Brown: [],
+	})
+	const showHints = useSignal(false)
+
+	const newGame = $(async (Length: number) => {
+		length.value = Length
+		const client = new RestClient()
+		const wordReq = await client.post({
+			path: 'api/word/random',
+			payload: { Length },
+		})
+		if (wordReq.ok) {
+			word.value = await wordReq.json()
+			const WordId = word.value.id
+			const gameReq = await client.post({
+				path: 'api/guess_word',
+				payload: { WordId },
+			})
+			if (gameReq.ok) game.value = await gameReq.json()
+		}
+	})
+
+	const updateHintArgs = $(() => {
+		hintArgs.Brown = []
+		hintArgs.Gray = []
+		hintArgs.Green = []
+		for (let i = 0; i < hintArgs.Length; i++) {
+			hintArgs.Brown[i] = []
+			hintArgs.Green.push('')
+		}
+		if (game.value.guesses && game.value.guesses.length > 0) {
+			for (const guess of game.value.guesses) {
+				if (guess.ratings && guess.ratings.length > 0) {
+					for (let i = 0; i < guess.ratings.length; i++) {
+						const rating = guess.ratings[i]
+						const lettter = guess.Guess ? guess.Guess[i] : ''
+						if (lettter) {
+							switch (rating.Rating) {
+								case 'Gray':
+									hintArgs.Gray.push(lettter)
+									break
+								case 'Brown':
+									hintArgs.Brown[i].push(lettter)
+									break
+								case 'Green':
+									hintArgs.Green[i] = lettter
+									break
+							}
+						}
+					}
+				}
+			}
+		}
+	})
+
+	const fetchHints = $(async () => {
+		if (game.value.guesses == undefined || game.value.guesses.length <= 0)
+			return
+		await updateHintArgs()
+		const client = new RestClient()
+		const req = await client.post({
+			path: 'api/guess_word/hint',
+			payload: hintArgs,
+		})
+		if (req.ok) {
+			hints.value = await req.json()
+		}
+	})
+
+	const toggleHints = $(() => {
+		showHints.value = !showHints.value
+		if (showHints.value) {
+			fetchHints()
+		} else {
+			hints.value = []
+		}
+	})
+
+	const reloadGame = $(async () => {
+		if (!game.value.id) return
+		const client = new RestClient()
+		const req = await client.get({ path: `api/guess_word/${game.value.id}` })
+		if (req.ok) {
+			game.value = await req.json()
+			if (showHints.value) fetchHints()
+		}
+	})
+
+	const sendGuess = $(async (letters: string[]) => {
+		if (!game.value.id) return
+		const Guess = letters.join('').toLowerCase()
+		const { Word } = word.value
+		const client = new RestClient()
+		const req = await client.post({
+			path: `api/guess_word/${game.value.id}/guess`,
+			payload: { Guess, Word },
+		})
+		if (req.ok) reloadGame()
+	})
+
+	useTask$(({ track }) => {
+		const current = track(() => length.value)
+		hintArgs.Length = current
+		hintArgs.Brown = []
+		hintArgs.Gray = []
+		hintArgs.Green = []
+		for (let i = 0; i < current; i++) {
+			hintArgs.Brown[i] = []
+			hintArgs.Green.push('')
+		}
+		hints.value = []
+	})
+	return (
+		<div>
+			{game.value.guesses && (
+				<GuessWordGuessList guesses={game.value.guesses} />
+			)}
+			{game.value.Status == 'Playing' && (
+				<GuessWordGuessForm
+					length={length.value}
+					sendGuesWordGuess={sendGuess}
+				/>
+			)}
+			{game.value.Status == 'Playing' && (
+				<GuessWordHintList
+					show={showHints.value}
+					hints={hints.value}
+					toggleHints={toggleHints}
+				/>
+			)}
+			{game.value.Status != 'Playing' && (
+				<GuessWordOptions newGuessWord={newGame} />
+			)}
+			<div>
+				<Link href="/guess_word/scores">Top Scores</Link>
+			</div>
+		</div>
+	)
+})
