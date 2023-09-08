@@ -10,6 +10,14 @@ body {
 	@apply m-0 p-0;
 }
 
+label {
+	@apply font-bold;
+}
+
+h1 {
+	@apply text-2xl font-extrabold mb-1;
+}
+
 .score-list {
 	@apply border border-black rounded p-2;
 }
@@ -152,4 +160,53 @@ body {
 
 .hints-list div {
 	@apply mr-4 mb-2;
+}
+
+.sea-battle-grid {
+	@apply max-w-fit border border-black mb-4;
+}
+
+.grid-row {
+	@apply flex flex-wrap;
+}
+
+.grid-header-cell {
+	@apply w-12 h-12 bg-black text-white font-bold text-center pt-3;
+}
+
+.grid-cell {
+	@apply w-12 h-12 border-r border-b border-dotted border-slate-500;
+}
+
+.grid-cell.highlight {
+	@apply bg-yellow-100;
+}
+
+.grid-cell.occupied {
+	@apply bg-slate-200;
+}
+
+.sea-battle-ship-display {
+	@apply mr-2 p-2 border border-black rounded;
+}
+
+.sea-battle-ship-graphic {
+	@apply flex flex-wrap border border-black;
+}
+
+.sea-battle-ship-point {
+	@apply bg-slate-200 w-12 h-12;
+}
+
+.grid-cell.Miss span {
+	@apply w-8 h-8 rounded-full bg-blue-300 inline-block mt-2 ml-2;
+}
+
+.grid-cell.Hit span,
+.sea-battle-ship-point.Hit span {
+	@apply w-8 h-8 rounded-full bg-red-300 inline-block mt-2 ml-2;
+}
+
+.grid-cell.Sunk span {
+	@apply w-8 h-8 rounded-full bg-red-500 inline-block mt-2 ml-2;
 }
