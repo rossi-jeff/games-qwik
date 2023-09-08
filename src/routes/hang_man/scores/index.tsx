@@ -2,6 +2,7 @@ import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
 import type { HangMan } from "../../../types/hang-man.type";
 import { RestClient } from "../../../lib/rest-client";
 import { PaginationControls } from "~/components/pagination-controls/pagination-controls";
+import { Link } from "@builder.io/qwik-city";
 
 export default component$(() => {
   const path = "api/hang_man";
@@ -52,6 +53,7 @@ export default component$(() => {
       <h1>Hang Man Scores</h1>
       <div class="score-list">
         <div class="score-header">
+          <div class="cell-10-left"></div>
           <div class="cell-48-left">User</div>
           <div class="cell-20-center">Status</div>
           <div class="cell-20-center">Score</div>
@@ -61,6 +63,9 @@ export default component$(() => {
         </div>
         {items.value.map((hm) => (
           <div key={hm.id} class="score-row">
+            <div class="cell-10-left">
+              <Link href={"/hang_man/scores/" + hm.id}>View</Link>
+            </div>
             <div class="cell-48-left">
               {hm.user ? hm.user.UserName : "Anonymous"}
             </div>
