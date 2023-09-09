@@ -2,6 +2,7 @@ import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
 import type { Yacht } from "../../../types/yacht.type";
 import { RestClient } from "../../../lib/rest-client";
 import { PaginationControls } from "~/components/pagination-controls/pagination-controls";
+import { Link } from "@builder.io/qwik-city";
 
 export default component$(() => {
   const path = "api/yacht";
@@ -52,11 +53,15 @@ export default component$(() => {
       <h1>Yacht Scores</h1>
       <div class="score-list">
         <div class="score-header">
+          <div class="cell-10-left"></div>
           <div class="cell-48-left">User</div>
           <div class="cell-20-right">Score</div>
         </div>
         {items.value.map((y) => (
           <div key={y.id} class="score-row">
+            <div class="cell-10-left">
+              <Link href={"/yacht/scores/" + y.id}>View</Link>
+            </div>
             <div class="cell-48-left">
               {y.user ? y.user.UserName : "Anonymous"}
             </div>
