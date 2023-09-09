@@ -273,7 +273,8 @@ button.letter.Wrong {
 
 .yacht-turn-display,
 .yacht-score-options-list,
-.yacht-score-card {
+.yacht-score-card,
+.ten-grand-current-turn {
 	@apply border border-black rounded p-2 mb-2;
 }
 
@@ -288,4 +289,8 @@ button.letter.Wrong {
 
 .die-lg {
 	@apply w-16 h-16;
+}
+
+.ten-grand-dice-container {
+	@apply flex flex-wrap h-24 p-2 max-w-fit border border-dotted rounded border-black min-w-[10em];
 }
