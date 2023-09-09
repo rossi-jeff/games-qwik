@@ -41,6 +41,8 @@ export const YachtTurnDisplay = component$<YachtTurnDisplayProps>((props) => {
 		props.rollDice(keep.value)
 	})
 
+	const noop = $(() => {})
+
 	useTask$(async () => {
 		const { roll } = props
 		dice.value = []
@@ -55,7 +57,13 @@ export const YachtTurnDisplay = component$<YachtTurnDisplayProps>((props) => {
 			<div class="flex flex-wrap">
 				{dice.value.map((d, i) => (
 					<div key={i} class="mr-4">
-						<DieDisplayLg face={d} />
+						<DieDisplayLg
+							face={d}
+							index={i}
+							from="yacht"
+							draggable={false}
+							dragStart={noop}
+						/>
 						<div class="w-20 text-center">
 							<input
 								type="checkbox"

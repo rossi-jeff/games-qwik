@@ -7,285 +7,309 @@
 @tailwind utilities;
 
 body {
-	@apply m-0 p-0;
+  @apply m-0 p-0;
 }
 
 label {
-	@apply font-bold;
+  @apply font-bold;
 }
 
 h1 {
-	@apply text-2xl font-extrabold mb-1;
+  @apply text-2xl font-extrabold mb-1;
 }
 
 .score-list {
-	@apply border border-black rounded p-2;
+  @apply border border-black rounded p-2;
 }
 
 .score-header {
-	@apply flex flex-wrap justify-between py-1 px-2 bg-black text-white font-bold;
+  @apply flex flex-wrap justify-between py-1 px-2 bg-black text-white font-bold;
 }
 
 .score-row {
-	@apply flex flex-wrap justify-between border-b border-black border-dashed py-1 px-2;
+  @apply flex flex-wrap justify-between border-b border-black border-dashed py-1 px-2;
 }
 
 .cell-48-left {
-	@apply w-48 text-left;
+  @apply w-48 text-left;
 }
 
 .cell-20-center {
-	@apply w-20 text-center;
+  @apply w-20 text-center;
 }
 
 .cell-20-right {
-	@apply w-20 text-right;
+  @apply w-20 text-right;
 }
 
 .cell-32-right {
-	@apply w-32 text-right;
+  @apply w-32 text-right;
 }
 
 .cell-10-left {
-	@apply w-10 text-left;
+  @apply w-10 text-left;
 }
 
 .code-breaker-color-options,
 .code-breaker-guess-colors,
 .code-breaker-guess-keys,
 .code-breaker-solution {
-	@apply flex flex-wrap;
+  @apply flex flex-wrap;
 }
 
 .code-breaker-color-options div {
-	@apply mr-3 px-2 py-1 rounded border font-bold;
+  @apply mr-3 px-2 py-1 rounded border font-bold;
 }
 
 .code-breaker-guess-colors div,
 .code-breaker-solution div {
-	@apply w-8 h-8 border rounded-full mr-4;
+  @apply w-8 h-8 border rounded-full mr-4;
 }
 
 .code-breaker-guess-keys div {
-	@apply w-4 h-4 border rounded-full mr-2;
+  @apply w-4 h-4 border rounded-full mr-2;
 }
 
 .code-breaker-color-options div.Black,
 .code-breaker-guess-colors div.Black,
 .code-breaker-guess-keys div.Black,
 .code-breaker-solution div.Black {
-	@apply border-black bg-black text-white;
+  @apply border-black bg-black text-white;
 }
 
 .code-breaker-color-options div.Blue,
 .code-breaker-guess-colors div.Blue,
 .code-breaker-solution div.Blue {
-	@apply border-blue-900 bg-blue-700 text-white;
+  @apply border-blue-900 bg-blue-700 text-white;
 }
 
 .code-breaker-color-options div.Brown,
 .code-breaker-guess-colors div.Brown,
 .code-breaker-solution div.Brown {
-	@apply border-amber-900 bg-amber-700 text-white;
+  @apply border-amber-900 bg-amber-700 text-white;
 }
 
 .code-breaker-color-options div.Green,
 .code-breaker-guess-colors div.Green,
 .code-breaker-solution div.Green {
-	@apply border-green-900 bg-green-400 text-black;
+  @apply border-green-900 bg-green-400 text-black;
 }
 
 .code-breaker-color-options div.Orange,
 .code-breaker-guess-colors div.Orange,
 .code-breaker-solution div.Orange {
-	@apply bg-orange-400 border-orange-900 text-black;
+  @apply bg-orange-400 border-orange-900 text-black;
 }
 
 .code-breaker-color-options div.Purple,
 .code-breaker-guess-colors div.Purple,
 .code-breaker-solution div.Purple {
-	@apply bg-purple-700 border-purple-900 text-white;
+  @apply bg-purple-700 border-purple-900 text-white;
 }
 
 .code-breaker-color-options div.Red,
 .code-breaker-guess-colors div.Red,
 .code-breaker-solution div.Red {
-	@apply bg-red-600 border-red-900 text-white;
+  @apply bg-red-600 border-red-900 text-white;
 }
 
 .code-breaker-color-options div.White,
 .code-breaker-guess-colors div.White,
 .code-breaker-guess-keys div.White,
 .code-breaker-solution div.White {
-	@apply bg-white border-black text-black;
+  @apply bg-white border-black text-black;
 }
 
 .code-breaker-color-options div.Yellow,
 .code-breaker-guess-colors div.Yellow,
 .code-breaker-solution div.Yellow {
-	@apply bg-yellow-300 border-yellow-900 text-black;
+  @apply bg-yellow-300 border-yellow-900 text-black;
 }
 
 .guess-word-letters {
-	@apply flex flex-wrap;
+  @apply flex flex-wrap;
 }
 
 .guess-word-letters input {
-	@apply bg-white border border-black rounded w-8 h-8 text-center mr-2 font-bold text-sm;
+  @apply bg-white border border-black rounded w-8 h-8 text-center mr-2 font-bold text-sm;
 }
 
 .guess-word-guess {
-	@apply flex flex-wrap;
+  @apply flex flex-wrap;
 }
 
 .guess-word-guess div {
-	@apply border rounded w-8 h-8 text-center mr-2 font-bold text-sm pt-1;
+  @apply border rounded w-8 h-8 text-center mr-2 font-bold text-sm pt-1;
 }
 
 .guess-word-guess div.Gray {
-	@apply border-slate-900 bg-slate-300 text-black;
+  @apply border-slate-900 bg-slate-300 text-black;
 }
 
 .guess-word-guess div.Green {
-	@apply border-green-900 bg-green-400 text-black;
+  @apply border-green-900 bg-green-400 text-black;
 }
 
 .guess-word-guess div.Brown {
-	@apply border-amber-900 bg-amber-700 text-white;
+  @apply border-amber-900 bg-amber-700 text-white;
 }
 
 .hints-list {
-	@apply flex flex-wrap;
+  @apply flex flex-wrap;
 }
 
 .hints-list div {
-	@apply mr-4 mb-2;
+  @apply mr-4 mb-2;
 }
 
 .sea-battle-grid {
-	@apply max-w-fit border border-black mb-4;
+  @apply max-w-fit border border-black mb-4;
 }
 
 .grid-row {
-	@apply flex flex-wrap;
+  @apply flex flex-wrap;
 }
 
 .grid-header-cell {
-	@apply w-12 h-12 bg-black text-white font-bold text-center pt-3;
+  @apply w-12 h-12 bg-black text-white font-bold text-center pt-3;
 }
 
 .grid-cell {
-	@apply w-12 h-12 border-r border-b border-dotted border-slate-500;
+  @apply w-12 h-12 border-r border-b border-dotted border-slate-500;
 }
 
 .grid-cell.highlight {
-	@apply bg-yellow-100;
+  @apply bg-yellow-100;
 }
 
 .grid-cell.occupied {
-	@apply bg-slate-200;
+  @apply bg-slate-200;
 }
 
 .sea-battle-ship-display {
-	@apply mr-2 p-2 border border-black rounded;
+  @apply mr-2 p-2 border border-black rounded;
 }
 
 .sea-battle-ship-graphic {
-	@apply flex flex-wrap border border-black;
+  @apply flex flex-wrap border border-black;
 }
 
 .sea-battle-ship-point {
-	@apply bg-slate-200 w-12 h-12;
+  @apply bg-slate-200 w-12 h-12;
 }
 
 .grid-cell.Miss span {
-	@apply w-8 h-8 rounded-full bg-blue-300 inline-block mt-2 ml-2;
+  @apply w-8 h-8 rounded-full bg-blue-300 inline-block mt-2 ml-2;
 }
 
 .grid-cell.Hit span,
 .sea-battle-ship-point.Hit span {
-	@apply w-8 h-8 rounded-full bg-red-300 inline-block mt-2 ml-2;
+  @apply w-8 h-8 rounded-full bg-red-300 inline-block mt-2 ml-2;
 }
 
 .grid-cell.Sunk span {
-	@apply w-8 h-8 rounded-full bg-red-500 inline-block mt-2 ml-2;
+  @apply w-8 h-8 rounded-full bg-red-500 inline-block mt-2 ml-2;
 }
 
 #hang-man-drawing {
-	@apply w-[20em] h-[22em] border border-black rounded relative mb-4;
+  @apply w-[20em] h-[22em] border border-black rounded relative mb-4;
 }
 
 #gallows-top {
-	@apply h-6 w-[10em] absolute top-4 left-4 border border-amber-900 bg-amber-700;
+  @apply h-6 w-[10em] absolute top-4 left-4 border border-amber-900 bg-amber-700;
 }
 
 #gallows-left {
-	@apply w-6 h-[17em] absolute top-10 left-4 border border-amber-900 bg-amber-700;
+  @apply w-6 h-[17em] absolute top-10 left-4 border border-amber-900 bg-amber-700;
 }
 
 #gallows-base {
-	@apply h-6 w-[18em] absolute left-4 bottom-4 border border-amber-900 bg-amber-700;
+  @apply h-6 w-[18em] absolute left-4 bottom-4 border border-amber-900 bg-amber-700;
 }
 
 #rope {
-	@apply w-2 h-6 absolute top-10 left-[10em] border border-amber-800 bg-amber-700;
+  @apply w-2 h-6 absolute top-10 left-[10em] border border-amber-800 bg-amber-700;
 }
 
 #hm-head {
-	@apply w-10 h-10 border border-black bg-black rounded-full absolute top-16 left-[9em] hidden;
+  @apply w-10 h-10 border border-black bg-black rounded-full absolute top-16 left-[9em] hidden;
 }
 
 #hm-body {
-	@apply w-16 h-24 border border-black bg-black rounded absolute top-[6.5em] left-[8.25em] hidden;
+  @apply w-16 h-24 border border-black bg-black rounded absolute top-[6.5em] left-[8.25em] hidden;
 }
 
 #hm-left-arm {
-	@apply h-4 w-12 border border-black bg-black rounded absolute top-[6.5em] left-[5.25em] hidden;
+  @apply h-4 w-12 border border-black bg-black rounded absolute top-[6.5em] left-[5.25em] hidden;
 }
 
 #hm-right-arm {
-	@apply h-4 w-12 border border-black bg-black rounded absolute top-[6.5em] left-[12.25em] hidden;
+  @apply h-4 w-12 border border-black bg-black rounded absolute top-[6.5em] left-[12.25em] hidden;
 }
 
 #hm-left-leg {
-	@apply w-6 h-20 border border-black bg-black rounded absolute top-[12.25em] left-[8.25em] hidden;
+  @apply w-6 h-20 border border-black bg-black rounded absolute top-[12.25em] left-[8.25em] hidden;
 }
 
 #hm-right-leg {
-	@apply w-6 h-20 border border-black bg-black rounded absolute top-[12.25em] left-[10.75em] hidden;
+  @apply w-6 h-20 border border-black bg-black rounded absolute top-[12.25em] left-[10.75em] hidden;
 }
 
 button.letter {
-	@apply text-sm px-2 py-1 border border-black bg-white text-black rounded mr-2 mb-2;
+  @apply text-sm px-2 py-1 border border-black bg-white text-black rounded mr-2 mb-2;
 }
 
 .hang-man-display-letter {
-	@apply border-b border-black text-center text-lg font-bold uppercase w-8 h-8 mr-2 mb-4;
+  @apply border-b border-black text-center text-lg font-bold uppercase w-8 h-8 mr-2 mb-4;
 }
 
 button.letter.Correct {
-	@apply border-green-900 bg-green-600 text-white;
+  @apply border-green-900 bg-green-600 text-white;
 }
 
 button.letter.Wrong {
-	@apply border-red-900 bg-red-600 text-white line-through;
+  @apply border-red-900 bg-red-600 text-white line-through;
 }
 
 .yacht-turn-display,
 .yacht-score-options-list,
-.yacht-score-card {
-	@apply border border-black rounded p-2 mb-2;
+.yacht-score-card,
+.ten-grand-current-turn,
+.ten-grand-options-list,
+.ten-grand-score-card {
+  @apply border border-black rounded p-2 mb-2;
 }
 
 .yacht-score-options-row,
-.yacht-score-card-row {
-	@apply flex flex-wrap border-b border-dashed border-black px-2 py-1;
+.yacht-score-card-row,
+.ten-grand-options-row {
+  @apply flex flex-wrap border-b border-dashed border-black px-2 py-1;
 }
 
 .die-display-lg {
-	@apply w-20 h-20 p-2;
+  @apply w-20 h-20 p-2;
 }
 
 .die-lg {
-	@apply w-16 h-16;
+  @apply w-16 h-16;
+}
+
+.ten-grand-dice-container {
+  @apply flex flex-wrap h-24 p-2 max-w-fit border border-dotted rounded border-black min-w-[10em] mb-2;
+}
+
+.ten-grand-turn-display {
+  @apply flex flex-wrap px-2 py-1 border-b border-dashed border-black;
+}
+
+.ten-grand-turn-display-row {
+  @apply flex flex-wrap justify-between px-2 pb-1 mb-1 border-b border-dotted border-black;
+}
+
+.dice-display-sm {
+  @apply w-6 h-6 p-0;
+}
+
+.die-sm {
+  @apply w-6 h-6;
 }
