@@ -5,6 +5,7 @@ import {
   useSignal,
   noSerialize,
   type QwikMouseEvent,
+  type QwikDragEvent,
 } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { PlayingCard } from "~/components/playing-card/playing-card";
@@ -92,7 +93,19 @@ export default component$(() => {
     }
   );
 
-  const onDragStart = $(() => {});
+  const onDragStart = $(
+    (_: QwikDragEvent<HTMLDivElement>, target: HTMLDivElement) => {
+      dragging.value = target.id;
+    }
+  );
+
+  const onDrop = $(
+    (_: QwikDragEvent<HTMLDivElement>, target: HTMLDivElement) => {
+      const to = target.id;
+      const dragged = dragging.value;
+      console.log({ to, dragged });
+    }
+  );
 
   return (
     <div>
@@ -132,7 +145,12 @@ export default component$(() => {
           </div>
         </div>
         <div class="flex flex-wrap">
-          <div id="aces-0" class="card-container ml-4">
+          <div
+            id="aces-0"
+            class="card-container ml-4"
+            onDrop$={onDrop}
+            preventdefault:dragover
+          >
             {aces["aces-0"].map((card, index) => (
               <PlayingCard
                 key={card ? card.id : index}
@@ -145,7 +163,12 @@ export default component$(() => {
               />
             ))}
           </div>
-          <div id="aces-1" class="card-container ml-4">
+          <div
+            id="aces-1"
+            class="card-container ml-4"
+            onDrop$={onDrop}
+            preventdefault:dragover
+          >
             {aces["aces-1"].map((card, index) => (
               <PlayingCard
                 key={card ? card.id : index}
@@ -158,7 +181,12 @@ export default component$(() => {
               />
             ))}
           </div>
-          <div id="aces-2" class="card-container ml-4">
+          <div
+            id="aces-2"
+            class="card-container ml-4"
+            onDrop$={onDrop}
+            preventdefault:dragover
+          >
             {aces["aces-2"].map((card, index) => (
               <PlayingCard
                 key={card ? card.id : index}
@@ -171,7 +199,12 @@ export default component$(() => {
               />
             ))}
           </div>
-          <div id="aces-3" class="card-container ml-4">
+          <div
+            id="aces-3"
+            class="card-container ml-4"
+            onDrop$={onDrop}
+            preventdefault:dragover
+          >
             {aces["aces-3"].map((card, index) => (
               <PlayingCard
                 key={card ? card.id : index}
@@ -187,7 +220,12 @@ export default component$(() => {
         </div>
       </div>
       <div class="flex flex-wrap justify-between mb-4">
-        <div id="tableau-0" class="card-container">
+        <div
+          id="tableau-0"
+          class="card-container"
+          onDrop$={onDrop}
+          preventdefault:dragover
+        >
           {tableau["tableau-0"].map((card, index) => (
             <PlayingCard
               key={card ? card.id : index}
@@ -200,7 +238,12 @@ export default component$(() => {
             />
           ))}
         </div>
-        <div id="tableau-1" class="card-container">
+        <div
+          id="tableau-1"
+          class="card-container"
+          onDrop$={onDrop}
+          preventdefault:dragover
+        >
           {tableau["tableau-1"].map((card, index) => (
             <PlayingCard
               key={card ? card.id : index}
@@ -213,7 +256,12 @@ export default component$(() => {
             />
           ))}
         </div>
-        <div id="tableau-2" class="card-container">
+        <div
+          id="tableau-2"
+          class="card-container"
+          onDrop$={onDrop}
+          preventdefault:dragover
+        >
           {tableau["tableau-2"].map((card, index) => (
             <PlayingCard
               key={card ? card.id : index}
@@ -226,7 +274,12 @@ export default component$(() => {
             />
           ))}
         </div>
-        <div id="tableau-3" class="card-container">
+        <div
+          id="tableau-3"
+          class="card-container"
+          onDrop$={onDrop}
+          preventdefault:dragover
+        >
           {tableau["tableau-3"].map((card, index) => (
             <PlayingCard
               key={card ? card.id : index}
@@ -239,7 +292,12 @@ export default component$(() => {
             />
           ))}
         </div>
-        <div id="tableau-4" class="card-container">
+        <div
+          id="tableau-4"
+          class="card-container"
+          onDrop$={onDrop}
+          preventdefault:dragover
+        >
           {tableau["tableau-4"].map((card, index) => (
             <PlayingCard
               key={card ? card.id : index}
@@ -252,7 +310,12 @@ export default component$(() => {
             />
           ))}
         </div>
-        <div id="tableau-5" class="card-container">
+        <div
+          id="tableau-5"
+          class="card-container"
+          onDrop$={onDrop}
+          preventdefault:dragover
+        >
           {tableau["tableau-5"].map((card, index) => (
             <PlayingCard
               key={card ? card.id : index}
@@ -265,7 +328,12 @@ export default component$(() => {
             />
           ))}
         </div>
-        <div id="tableau-6" class="card-container">
+        <div
+          id="tableau-6"
+          class="card-container"
+          onDrop$={onDrop}
+          preventdefault:dragover
+        >
           {tableau["tableau-6"].map((card, index) => (
             <PlayingCard
               key={card ? card.id : index}
