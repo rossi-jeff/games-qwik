@@ -79,6 +79,7 @@ export default component$(() => {
 		resets.value = 0
 		dragging.value = ''
 		playing.value = true
+		checkStatus()
 	})
 
 	const quit = $(() => {
@@ -268,7 +269,7 @@ export default component$(() => {
 				if (card && card.facedown) faceDownCount++
 			}
 		}
-		canAutoComplete.value = faceDownCount == 0
+		canAutoComplete.value = faceDownCount == 0 && aceCount != 0
 		if (aceCount == 52) {
 			quit()
 		}
@@ -331,8 +332,10 @@ export default component$(() => {
 		let aceCount = 0
 		while (aceCount < 52) {
 			const { from, to } = await getAutoMoveCard()
-			if (from && to) await autoMoveCard(from, to)
-			aceCount = await getAceCount()
+			if (from && to) {
+				await autoMoveCard(from, to)
+				aceCount = await getAceCount()
+			}
 		}
 		checkStatus()
 	})
