@@ -313,3 +313,22 @@ button.letter.Wrong {
 .die-sm {
   @apply w-6 h-6;
 }
+
+.card-container {
+  @apply border border-dashed border-black rounded w-28 h-[9.5rem] relative;
+}
+
+.playing-card {
+  @apply p-0 m-0 w-24 h-32 absolute left-2;
+}
+
+.playing-card-img {
+  @apply p-0 m-0 w-24 h-32;
+}
+
+.playing-card.draggable {
+  @apply cursor-move;
+}
+.playing-card.clickable {
+  @apply cursor-pointer;
+}

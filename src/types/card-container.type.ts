@@ -1,3 +1,4 @@
-import { Card } from '../lib/card.class'
+import type { NoSerialize } from "@builder.io/qwik";
+import type { Card } from "~/lib/card.class";
 
-export type CardContainerType = { [key: string]: Card[] }
+export type CardContainerType = { [key: string]: Array<NoSerialize<Card>> };
