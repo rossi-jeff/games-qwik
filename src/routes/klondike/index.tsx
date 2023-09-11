@@ -6,9 +6,11 @@ import {
   noSerialize,
   type QwikMouseEvent,
   type QwikDragEvent,
+  type NoSerialize,
 } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { PlayingCard } from "~/components/playing-card/playing-card";
+import type { Card } from "~/lib/card.class";
 import { Deck } from "~/lib/deck.class";
 import type { CardContainerType } from "~/types/card-container.type";
 
@@ -34,6 +36,10 @@ export default component$(() => {
   });
   const moves = useSignal(0);
   const dragging = useSignal("");
+  const playing = useSignal(false);
+  const canAutoComplete = useSignal(false);
+  const resets = useSignal(0);
+  const resetLimit = 3;
 
   const initCardContainers = $(() => {
     util["stock"] = [];
@@ -46,8 +52,6 @@ export default component$(() => {
     const deck = new Deck();
     deck.shuffle();
     deck.preload();
-
-    initCardContainers();
 
     for (let i = 0; i < 7; i++) {
       for (let j = i; j < 7; j++) {
@@ -72,14 +76,25 @@ export default component$(() => {
     }
 
     moves.value = 0;
+    resets.value = 0;
     dragging.value = "";
+    playing.value = true;
+  });
+
+  const quit = $(() => {
+    initCardContainers();
+    playing.value = false;
   });
 
   const noop = $(() => {});
 
   const stockCardClicked = $(
-    (_: QwikMouseEvent<HTMLDivElement, MouseEvent>, target: HTMLDivElement) => {
+    (
+      event: QwikMouseEvent<HTMLDivElement, MouseEvent>,
+      target: HTMLDivElement
+    ) => {
       const cardId = target.id.split("_")[2];
+      event.stopPropagation();
 
       const card = util["stock"].pop();
       if (card && card.id == parseInt(cardId)) {
@@ -87,11 +102,26 @@ export default component$(() => {
         card.facedown = false;
         card.draggable = true;
         util["waste"].push(card);
+        moves.value++;
       } else if (card) {
         util["stock"].push(card);
       }
     }
   );
+
+  const resetStock = $(() => {
+    if (util["stock"].length || resets.value >= resetLimit) return;
+    while (util["waste"].length) {
+      const card = util["waste"].pop();
+      if (card) {
+        card.facedown = true;
+        card.draggable = false;
+        card.clickable = true;
+        util["stock"].push(card);
+      }
+    }
+    resets.value++;
+  });
 
   const onDragStart = $(
     (_: QwikDragEvent<HTMLDivElement>, target: HTMLDivElement) => {
@@ -99,25 +129,318 @@ export default component$(() => {
     }
   );
 
+  const getDraggedCard = $(() => {
+    let card: NoSerialize<Card> | undefined,
+      quantity = 0,
+      idx: number;
+    const parts = dragging.value.split("_");
+    const from = parts[0];
+    const cardId = parseInt(parts[2]);
+    switch (from) {
+      case "waste":
+        idx = util["waste"].findIndex((c) => c && c.id == cardId);
+        card = util["waste"][idx];
+        quantity = idx != -1 ? util["waste"].length - idx : 0;
+        break;
+      case "tableau-0":
+      case "tableau-1":
+      case "tableau-2":
+      case "tableau-3":
+      case "tableau-4":
+      case "tableau-5":
+      case "tableau-6":
+      case "tableau-7":
+        idx = tableau[from].findIndex((c) => c && c.id == cardId);
+        card = tableau[from][idx];
+        quantity = idx != -1 ? tableau[from].length - idx : 0;
+        break;
+    }
+    return { card, quantity };
+  });
+
+  const getTopCard = $((to: string) => {
+    let card: NoSerialize<Card> | undefined, length: number;
+    switch (to) {
+      case "tableau-0":
+      case "tableau-1":
+      case "tableau-2":
+      case "tableau-3":
+      case "tableau-4":
+      case "tableau-5":
+      case "tableau-6":
+      case "tableau-7":
+        length = tableau[to].length;
+        card = length > 0 ? tableau[to][length - 1] : undefined;
+        break;
+      case "aces-0":
+      case "aces-1":
+      case "aces-2":
+      case "aces-3":
+        length = aces[to].length;
+        card = length > 0 ? aces[to][length - 1] : undefined;
+        break;
+    }
+    return card;
+  });
+
+  const canDrop = $(
+    (
+      to: string,
+      quanity: number,
+      draggedCard: NoSerialize<Card> | undefined,
+      topCard: NoSerialize<Card> | undefined
+    ) => {
+      const deck = new Deck();
+      if (draggedCard == undefined) return false;
+      switch (to) {
+        case "tableau-0":
+        case "tableau-1":
+        case "tableau-2":
+        case "tableau-3":
+        case "tableau-4":
+        case "tableau-5":
+        case "tableau-6":
+        case "tableau-7":
+          if (topCard == undefined && draggedCard.face != "king") {
+            console.log("condition 1");
+            return false;
+          }
+          if (topCard && deck.color(topCard) == deck.color(draggedCard)) {
+            console.log("condition 2");
+            return false;
+          }
+          if (
+            topCard &&
+            deck.faces.indexOf(topCard.face) !=
+              deck.faces.indexOf(draggedCard.face) + 1
+          ) {
+            console.log("condition 3");
+            return false;
+          }
+          break;
+        case "aces-0":
+        case "aces-1":
+        case "aces-2":
+        case "aces-3":
+          if (quanity > 1) {
+            console.log("condition 4");
+            return false;
+          }
+          if (topCard == undefined && draggedCard.face != "ace") {
+            console.log("condition 5");
+            return false;
+          }
+          if (topCard && topCard.suit != draggedCard.suit) {
+            console.log("condition 6");
+            return false;
+          }
+          if (
+            topCard &&
+            deck.faces.indexOf(draggedCard.face) !=
+              deck.faces.indexOf(topCard.face) + 1
+          ) {
+            console.log("condition 7");
+            return false;
+          }
+          break;
+      }
+      return true;
+    }
+  );
+
+  const checkStatus = $(() => {
+    let aceCount = 0;
+    // auto complete is contrary to resumability
+    // let faceDownCount = 0;
+    for (const key in aces) {
+      aceCount += aces[key].length;
+    }
+    // for (const key in util) faceDownCount += util[key].length;
+    /*
+    for (const key in tableau) {
+      for (let i = 0; i < tableau[key].length; i++) {
+        const card = tableau[key][i];
+        if (card && card.facedown) faceDownCount++;
+      }
+    }
+    */
+    canAutoComplete.value = false;
+    if (aceCount == 52) {
+      quit();
+    }
+  });
+
+  const autoMoveCard = $(() => {
+    const deck = new Deck();
+    let lowestCard: Card | undefined,
+      topCard: Card | undefined,
+      topAce: Card | undefined,
+      from: string | undefined,
+      to: string | undefined,
+      length: number;
+    for (const key in tableau) {
+      length = tableau[key].length;
+      if (length) {
+        topCard = tableau[key][length - 1];
+        if (topCard) {
+          if (
+            !lowestCard ||
+            deck.faces.indexOf(topCard.face) <
+              deck.faces.indexOf(lowestCard.face)
+          ) {
+            lowestCard = topCard;
+            from = key;
+          }
+        }
+      }
+    }
+    if (from && lowestCard) {
+      for (const key in aces) {
+        length = aces[key].length;
+        if (length) {
+          topAce = aces[key][length - 1];
+          if (
+            topAce &&
+            topAce.suit == lowestCard.suit &&
+            deck.faces.indexOf(lowestCard.face) ==
+              deck.faces.indexOf(topAce.face) + 1
+          ) {
+            to = key;
+          }
+        } else if (lowestCard.face == "") {
+          to = key;
+        }
+      }
+      console.log({ from, to, lowestCard });
+      if (to) {
+        const card = tableau[from].pop();
+        if (card) {
+          aces[to].push(card);
+          moves.value++;
+        }
+      }
+    }
+  });
+
+  const autoComplete = $(() => {
+    let aceCount = 0;
+    while (aceCount < 52) {
+      setTimeout(async () => {
+        await autoMoveCard();
+        aceCount = 0;
+        for (const key in aces) {
+          aceCount += aces[key].length;
+        }
+      }, 500);
+    }
+    checkStatus();
+  });
+
+  const moveCards = $((from: string, to: string, cardId: number) => {
+    const toMove: Card[] = [];
+    let found = false;
+    switch (from) {
+      case "waste":
+        while (!found) {
+          const card = util["waste"].pop();
+          if (card) {
+            toMove.push(card);
+            if (card.id == cardId) found = true;
+          }
+        }
+        break;
+      case "tableau-0":
+      case "tableau-1":
+      case "tableau-2":
+      case "tableau-3":
+      case "tableau-4":
+      case "tableau-5":
+      case "tableau-6":
+      case "tableau-7":
+        while (!found) {
+          const card = tableau[from].pop();
+          if (card) {
+            toMove.push(card);
+            if (card.id == cardId) {
+              const length = tableau[from].length;
+              if (length) {
+                const top = tableau[from][length - 1];
+                if (top) {
+                  top.facedown = false;
+                  top.draggable = true;
+                  const tmp = tableau[from];
+                  tableau[from] = [];
+                  setTimeout(() => {
+                    tableau[from] = tmp;
+                  }, 0);
+                }
+              }
+              found = true;
+            }
+          }
+        }
+        break;
+    }
+    switch (to) {
+      case "tableau-0":
+      case "tableau-1":
+      case "tableau-2":
+      case "tableau-3":
+      case "tableau-4":
+      case "tableau-5":
+      case "tableau-6":
+      case "tableau-7":
+        while (toMove.length) {
+          const card = toMove.pop();
+          if (card) tableau[to].push(noSerialize(card));
+        }
+        break;
+      case "aces-0":
+      case "aces-1":
+      case "aces-2":
+      case "aces-3":
+        while (toMove.length) {
+          const card = toMove.pop();
+          if (card) {
+            card.draggable = false;
+            aces[to].push(noSerialize(card));
+          }
+        }
+        break;
+    }
+    moves.value++;
+    checkStatus();
+  });
+
   const onDrop = $(
-    (_: QwikDragEvent<HTMLDivElement>, target: HTMLDivElement) => {
+    async (_: QwikDragEvent<HTMLDivElement>, target: HTMLDivElement) => {
       const to = target.id;
-      const dragged = dragging.value;
-      console.log({ to, dragged });
+      const { card: draggedCard, quantity } = await getDraggedCard();
+      const topCard = await getTopCard(to);
+      const drop = await canDrop(to, quantity, draggedCard, topCard);
+      if (!drop || !draggedCard) return;
+      const from = dragging.value.split("_")[0];
+      moveCards(from, to, draggedCard.id);
     }
   );
 
   return (
     <div>
       <div class="flex flex-wrap justify-between">
-        <button onClick$={deal}>Deal</button>
+        <div>
+          {!playing.value && <button onClick$={deal}>Deal</button>}
+          {playing.value && <button onClick$={quit}>Quit</button>}
+          {canAutoComplete.value && (
+            <button onClick$={autoComplete}>Auto Complete</button>
+          )}
+        </div>
         <div>
           <Link href="/klondike/scores">Top Scores</Link>
         </div>
       </div>
       <div class="flex flex-wrap justify-between mb-4">
         <div class="flex flex-wrap">
-          <div id="stock" class="card-container mr-4">
+          <div id="stock" class="card-container mr-4" onClick$={resetStock}>
             {util["stock"].map((card, index) => (
               <PlayingCard
                 key={card ? card.id : index}
