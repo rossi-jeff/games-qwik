@@ -31,16 +31,17 @@ export const PlayingCard = component$<PlayingCardProps>((props) => {
   const visible = card ? card.visible : true;
   const id = `${from}_${level}_${card ? card.id : 0}_${index}`;
 
-  useVisibleTask$(async ({ track }) => {
-    const d = track(() => draggable);
-    const c = track(() => clickable);
-    const v = track(() => visible);
+  useVisibleTask$(() => {
     const el = document.getElementById(id);
     const top = level * 1.5 + 0.5;
     if (el) {
-      d ? el.classList.add("draggable") : el.classList.remove("draggable");
-      c ? el.classList.add("clickable") : el.classList.remove("clickable");
-      el.style.visibility = v ? "visible" : "hidden";
+      draggable
+        ? el.classList.add("draggable")
+        : el.classList.remove("draggable");
+      clickable
+        ? el.classList.add("clickable")
+        : el.classList.remove("clickable");
+      el.style.visibility = visible ? "visible" : "hidden";
       el.style.top = `${top}rem`;
     }
   });
