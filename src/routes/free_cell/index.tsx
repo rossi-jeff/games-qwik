@@ -12,8 +12,12 @@ import type { CardContainerType } from '../../types/card-container.type'
 import { Deck } from '../../lib/deck.class'
 import { PlayingCard } from '../../components/playing-card/playing-card'
 import type { Card } from '../../lib/card.class'
+import type { FreeCell } from '../../types/free-cell.type'
+import { GameStatus } from '../../enum/game-status.enum'
+import { RestClient } from '../../lib/rest-client'
 
 export default component$(() => {
+	const game = useSignal<FreeCell>({})
 	const tableau = useStore<CardContainerType>({
 		'tableau-0': [],
 		'tableau-1': [],
@@ -92,9 +96,22 @@ export default component$(() => {
 		for (let i = 0; i < 8; i++) tableau[`tableau-${i}`] = []
 	})
 
+	const updateGame = $(async (Status: GameStatus) => {
+		if (!game.value.id) return
+		const { elapsed: Elapsed } = clock
+		const Moves = moves.value
+		const client = new RestClient()
+		const req = await client.patch({
+			path: `api/free_cell/${game.value.id}`,
+			payload: { Status, Elapsed, Moves },
+		})
+		if (req.ok) game.value = await req.json()
+	})
+
 	const quit = $(() => {
 		clearCardContainers()
 		stopClock()
+		updateGame(GameStatus.Lost)
 		playing.value = false
 	})
 
@@ -141,7 +158,21 @@ export default component$(() => {
 		}
 		const aceCount = await getAceCount()
 		canAutoComplete.value = allDescending && aceCount < 52
-		if (aceCount == 52) await quit()
+		if (aceCount == 52) {
+			stopClock()
+			clearCardContainers()
+			updateGame(GameStatus.Won)
+		}
+	})
+
+	const createGame = $(async () => {
+		const client = new RestClient()
+		const req = await client.post({ path: 'api/free_cell', payload: {} })
+		if (req.ok) {
+			game.value = await req.json()
+			clock.formatted = '0:00'
+			startClock()
+		}
 	})
 
 	const deal = $(() => {
@@ -161,9 +192,8 @@ export default component$(() => {
 		}
 		playing.value = true
 		moves.value = 0
+		createGame()
 		adjustDraggable()
-		clock.formatted = '0:00'
-		startClock()
 	})
 
 	const noop = $(() => {})
@@ -497,12 +527,12 @@ export default component$(() => {
 		<div>
 			<div class="flex flex-wrap justify-between mb-4">
 				<div>
-					{!playing.value && (
+					{game.value.Status != GameStatus.Playing && (
 						<button onClick$={deal} class="mr-4">
 							Deal
 						</button>
 					)}
-					{playing.value && (
+					{game.value.Status == GameStatus.Playing && (
 						<button onClick$={quit} class="mr-4">
 							Quit
 						</button>
@@ -511,6 +541,12 @@ export default component$(() => {
 						<button onClick$={autoComplete}>Auto Complete</button>
 					)}
 				</div>
+				{game.value.Status != undefined && (
+					<div>
+						<strong class="mr-2">Status</strong>
+						{game.value.Status}
+					</div>
+				)}
 				<div>
 					<strong class="mr-2">Moves</strong>
 					{moves.value}

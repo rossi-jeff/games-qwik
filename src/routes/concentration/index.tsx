@@ -117,7 +117,6 @@ export default component$(() => {
 	})
 
 	const hide = $(() => {
-		console.log('hide')
 		for (let i = 0; i < state.cards.length; i++) {
 			const tmp = state.cards[i]
 			if (tmp) {
@@ -130,7 +129,6 @@ export default component$(() => {
 	})
 
 	const peek = $(async () => {
-		console.log('peek')
 		for (let i = 0; i < state.cards.length; i++) {
 			const tmp = state.cards[i]
 			if (tmp) {
