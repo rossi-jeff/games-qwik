@@ -41,6 +41,41 @@ export default component$(() => {
 	const canAutoComplete = useSignal(false)
 	const moves = useSignal(0)
 
+	// begin timer code
+	const clock = useStore<{
+		interval: number
+		initial: number
+		elapsed: number
+		formatted: string
+	}>({
+		interval: 0,
+		initial: 0,
+		elapsed: 0,
+		formatted: '0:00',
+	})
+
+	const stopClock = $(() => {
+		if (clock.interval) window.clearInterval(clock.interval)
+	})
+
+	const zeroPad = $((num: number, digits: number) => {
+		let str = num.toString()
+		while (str.length < digits) str = '0' + str
+		return str
+	})
+
+	const startClock = $(async () => {
+		clock.initial = Date.now()
+		await stopClock()
+		clock.interval = window.setInterval(async () => {
+			clock.elapsed = Math.floor((Date.now() - clock.initial) / 1000)
+			const seconds = await zeroPad(clock.elapsed % 60, 2)
+			const minutes = Math.floor(clock.elapsed / 60)
+			clock.formatted = `${minutes}:${seconds}`
+		}, 1000)
+	})
+	// end timer code
+
 	const getAceCount = $(() => {
 		let aceCount = 0
 		for (const key in aces) {
@@ -59,6 +94,7 @@ export default component$(() => {
 
 	const quit = $(() => {
 		clearCardContainers()
+		stopClock()
 		playing.value = false
 	})
 
@@ -126,6 +162,8 @@ export default component$(() => {
 		playing.value = true
 		moves.value = 0
 		adjustDraggable()
+		clock.formatted = '0:00'
+		startClock()
 	})
 
 	const noop = $(() => {})
@@ -472,6 +510,14 @@ export default component$(() => {
 					{canAutoComplete.value && (
 						<button onClick$={autoComplete}>Auto Complete</button>
 					)}
+				</div>
+				<div>
+					<strong class="mr-2">Moves</strong>
+					{moves.value}
+				</div>
+				<div>
+					<strong class="mr-2">Time</strong>
+					{clock.formatted}
 				</div>
 				<div>
 					<Link href="/free_cell/scores">Top Scores</Link>
