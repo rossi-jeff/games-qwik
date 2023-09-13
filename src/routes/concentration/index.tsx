@@ -11,8 +11,12 @@ import { PlayingCard } from '~/components/playing-card/playing-card'
 import { Card } from '~/lib/card.class'
 import { Deck } from '~/lib/deck.class'
 import type { CardArray } from '~/types/card-container.type'
+import type { Concentration } from '../../types/concentration.type'
+import { GameStatus } from '../../enum/game-status.enum'
+import { RestClient } from '../../lib/rest-client'
 
 export default component$(() => {
+	const game = useSignal<Concentration>({})
 	const state = useStore<{ cards: CardArray }>({
 		cards: [],
 	})
@@ -59,10 +63,33 @@ export default component$(() => {
 	})
 	// end timer code
 
+	const updateGame = $(async (Status: GameStatus) => {
+		if (!game.value.id) return
+		const { elapsed: Elapsed } = clock
+		const Moves = moves.value
+		const Matched = matches.value
+		const client = new RestClient()
+		const req = await client.patch({
+			path: `api/concentration/${game.value.id}`,
+			payload: { Status, Elapsed, Moves, Matched },
+		})
+		if (req.ok) game.value = await req.json()
+	})
+
 	const quit = $(() => {
 		state.cards = []
 		stopClock()
+		updateGame(GameStatus.Lost)
 		playing.value = false
+	})
+
+	const createGame = $(async () => {
+		const client = new RestClient()
+		const req = await client.post({ path: 'api/concentration', payload: {} })
+		if (req.ok) {
+			game.value = await req.json()
+			startClock()
+		}
 	})
 
 	const deal = $(() => {
@@ -85,7 +112,7 @@ export default component$(() => {
 		moves.value = 0
 		matches.value = 0
 		clock.formatted = '0:00'
-		startClock()
+		createGame()
 		playing.value = true
 	})
 
@@ -145,6 +172,10 @@ export default component$(() => {
 				hideCard(firstId.value)
 				hideCard(secondId.value)
 				matches.value++
+				if (matches.value == 26) {
+					stopClock()
+					updateGame(GameStatus.Won)
+				}
 			} else {
 				flipCard(firstId.value, true)
 				flipCard(secondId.value, true)
@@ -183,22 +214,28 @@ export default component$(() => {
 		<div>
 			<div class="flex flex-wrap justify-between">
 				<div>
-					{!playing.value && (
+					{game.value.Status != GameStatus.Playing && (
 						<button class="mr-4" onClick$={deal}>
 							Deal
 						</button>
 					)}
-					{playing.value && (
+					{game.value.Status == GameStatus.Playing && (
 						<button class="mr-4" onClick$={quit}>
 							Quit
 						</button>
 					)}
-					{playing.value && (
+					{game.value.Status == GameStatus.Playing && (
 						<button class="mr-4" onClick$={peek}>
 							Peek
 						</button>
 					)}
 				</div>
+				{game.value.Status != undefined && (
+					<div>
+						<strong class="mr-2">Status</strong>
+						{game.value.Status}
+					</div>
+				)}
 				<div>
 					<strong class="mr-2">Moves</strong>
 					{moves.value}
