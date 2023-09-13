@@ -13,8 +13,12 @@ import { PlayingCard } from '~/components/playing-card/playing-card'
 import type { Card } from '~/lib/card.class'
 import { Deck } from '~/lib/deck.class'
 import type { CardContainerType } from '~/types/card-container.type'
+import type { Klondike } from '../../types/klondike.type'
+import { GameStatus } from '../../enum/game-status.enum'
+import { RestClient } from '../../lib/rest-client'
 
 export default component$(() => {
+	const game = useSignal<Klondike>({})
 	const tableau = useStore<CardContainerType>({
 		'tableau-0': [],
 		'tableau-1': [],
@@ -41,11 +45,56 @@ export default component$(() => {
 	const resets = useSignal(0)
 	const resetLimit = 3
 
+	// begin timer code
+	const clock = useStore<{
+		interval: number
+		initial: number
+		elapsed: number
+		formatted: string
+	}>({
+		interval: 0,
+		initial: 0,
+		elapsed: 0,
+		formatted: '0:00',
+	})
+
+	const stopClock = $(() => {
+		if (clock.interval) window.clearInterval(clock.interval)
+	})
+
+	const zeroPad = $((num: number, digits: number) => {
+		let str = num.toString()
+		while (str.length < digits) str = '0' + str
+		return str
+	})
+
+	const startClock = $(async () => {
+		clock.initial = Date.now()
+		await stopClock()
+		clock.interval = window.setInterval(async () => {
+			clock.elapsed = Math.floor((Date.now() - clock.initial) / 1000)
+			const seconds = await zeroPad(clock.elapsed % 60, 2)
+			const minutes = Math.floor(clock.elapsed / 60)
+			clock.formatted = `${minutes}:${seconds}`
+		}, 1000)
+	})
+	// end timer code
+
 	const initCardContainers = $(() => {
 		util['stock'] = []
 		util['waste'] = []
 		for (let i = 0; i < 7; i++) tableau[`tableau-${i}`] = []
 		for (let i = 0; i < 4; i++) aces[`aces-${i}`] = []
+	})
+
+	const createGame = $(async () => {
+		const client = new RestClient()
+		const req = await client.post({ path: 'api/klondike', payload: {} })
+		if (req.ok) {
+			game.value = await req.json()
+			clock.formatted = '0:00'
+			startClock()
+		}
 	})
 
 	const deal = $(() => {
@@ -79,11 +128,26 @@ export default component$(() => {
 		resets.value = 0
 		dragging.value = ''
 		playing.value = true
+		createGame()
 		checkStatus()
+	})
+
+	const updateGame = $(async (Status: GameStatus) => {
+		if (!game.value.id) return
+		const { elapsed: Elapsed } = clock
+		const Moves = moves.value
+		const client = new RestClient()
+		const req = await client.patch({
+			path: `api/klondike/${game.value.id}`,
+			payload: { Status, Elapsed, Moves },
+		})
+		if (req.ok) game.value = await req.json()
 	})
 
 	const quit = $(() => {
 		initCardContainers()
+		stopClock()
+		updateGame(GameStatus.Lost)
 		playing.value = false
 	})
 
@@ -271,7 +335,9 @@ export default component$(() => {
 		}
 		canAutoComplete.value = faceDownCount == 0 && aceCount != 0
 		if (aceCount == 52) {
-			quit()
+			stopClock()
+			initCardContainers()
+			updateGame(GameStatus.Won)
 		}
 	})
 
@@ -432,12 +498,12 @@ export default component$(() => {
 		<div>
 			<div class="flex flex-wrap justify-between">
 				<div>
-					{!playing.value && (
+					{game.value.Status != GameStatus.Playing && (
 						<button onClick$={deal} class="mr-4">
 							Deal
 						</button>
 					)}
-					{playing.value && (
+					{game.value.Status == GameStatus.Playing && (
 						<button onClick$={quit} class="mr-4">
 							Quit
 						</button>
@@ -445,6 +511,20 @@ export default component$(() => {
 					{canAutoComplete.value && (
 						<button onClick$={autoComplete}>Auto Complete</button>
 					)}
+				</div>
+				{game.value.Status != undefined && (
+					<div>
+						<strong class="mr-2">Status</strong>
+						{game.value.Status}
+					</div>
+				)}
+				<div>
+					<strong class="mr-2">Moves</strong>
+					{moves.value}
+				</div>
+				<div>
+					<strong class="mr-2">Time</strong>
+					{clock.formatted}
 				</div>
 				<div>
 					<Link href="/klondike/scores">Top Scores</Link>
