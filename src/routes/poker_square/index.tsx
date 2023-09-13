@@ -12,8 +12,12 @@ import type { CardArray } from '../../types/card-container.type'
 import { PlayingCard } from '../../components/playing-card/playing-card'
 import { Deck } from '../../lib/deck.class'
 import { Card } from '../../lib/card.class'
+import type { PokerSquare } from '../../types/poker-square.type'
+import { GameStatus } from '../../enum/game-status.enum'
+import { RestClient } from '../../lib/rest-client'
 
 export default component$(() => {
+	const game = useSignal<PokerSquare>({})
 	const state = useStore<{
 		stock: CardArray
 		waste: CardArray
@@ -52,7 +56,6 @@ export default component$(() => {
 	const clearState = $(() => {
 		state.stock = []
 		state.waste = []
-		scores.total = 0
 		state.row = 'A'
 		state.column = 1
 		for (const row of rows) {
@@ -61,6 +64,15 @@ export default component$(() => {
 				scores.columns[column] = 0
 				state.grid[row][column] = []
 			}
+		}
+	})
+
+	const createGame = $(async () => {
+		const client = new RestClient()
+		const req = await client.post({ path: 'api/poker_square', payload: {} })
+		if (req.ok) {
+			game.value = await req.json()
+			scores.total = 0
 		}
 	})
 
@@ -79,11 +91,27 @@ export default component$(() => {
 			}
 			counter++
 		}
+		createGame()
 		playing.value = true
+	})
+
+	const updateGame = $(async (Status: GameStatus) => {
+		if (!game.value.id) return
+		const Score = scores.total
+		const client = new RestClient()
+		const req = await client.patch({
+			path: `api/poker_square/${game.value.id}`,
+			payload: { Status, Score },
+		})
+		if (req.ok) {
+			game.value = await req.json()
+			clearState()
+		}
 	})
 
 	const quit = $(() => {
 		clearState()
+		updateGame(GameStatus.Lost)
 		playing.value = false
 	})
 
@@ -218,6 +246,9 @@ export default component$(() => {
 		}
 
 		scores.total = total
+		if (state.stock.length == 0 && state.waste.length == 0) {
+			updateGame(GameStatus.Won)
+		}
 	})
 
 	const placeCard = $(() => {
@@ -252,17 +283,23 @@ export default component$(() => {
 		<div>
 			<div class="flex flex-wrap justify-between">
 				<div>
-					{!playing.value && (
+					{game.value.Status != GameStatus.Playing && (
 						<button onClick$={deal} class="mr-4">
 							Deal
 						</button>
 					)}
-					{playing.value && (
+					{game.value.Status == GameStatus.Playing && (
 						<button onClick$={quit} class="mr-4">
 							Quit
 						</button>
 					)}
 				</div>
+				{game.value.Status != undefined && (
+					<div>
+						<strong class="mr-2">Status</strong>
+						{game.value.Status}
+					</div>
+				)}
 				<div>
 					<strong class="mr-2">Total</strong>
 					{scores.total}
