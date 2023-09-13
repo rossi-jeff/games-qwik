@@ -12,8 +12,12 @@ import { PlayingCard } from '~/components/playing-card/playing-card'
 import type { Card } from '~/lib/card.class'
 import { Deck } from '~/lib/deck.class'
 import type { CardArray, CardContainerType } from '~/types/card-container.type'
+import type { Spider } from '../../types/spider.type'
+import { GameStatus } from '../../enum/game-status.enum'
+import { RestClient } from '../../lib/rest-client'
 
 export default component$(() => {
+	const game = useSignal<Spider>({})
 	const suitCounts = [1, 2, 4]
 	const state = useStore<{ suits: number; stock: CardArray }>({
 		suits: 4,
@@ -86,12 +90,25 @@ export default component$(() => {
 
 	const noop = $(() => {})
 
+	const updateGame = $(async (Status: GameStatus) => {
+		if (!game.value.id) return
+		const { elapsed: Elapsed } = clock
+		const Moves = moves.value
+		const client = new RestClient()
+		const req = await client.patch({
+			path: `api/spider/${game.value.id}`,
+			payload: { Status, Elapsed, Moves },
+		})
+		if (req.ok) game.value = await req.json()
+	})
+
 	const quit = $(() => {
 		state.stock = []
 		for (const key in aces) aces[key] = []
 		for (const key in tableau) tableau[key] = []
 		playing.value = false
 		stopClock()
+		updateGame(GameStatus.Lost)
 	})
 
 	const getAceCount = $(() => {
@@ -160,7 +177,14 @@ export default component$(() => {
 			}
 		}
 		const aceCount = await getAceCount()
-		if (aceCount == 104) quit()
+		if (aceCount == 104) {
+			state.stock = []
+			for (const key in aces) aces[key] = []
+			for (const key in tableau) tableau[key] = []
+			playing.value = false
+			stopClock()
+			updateGame(GameStatus.Won)
+		}
 	})
 
 	const onDragStart = $(
@@ -243,6 +267,17 @@ export default component$(() => {
 		adjustDraggable()
 	})
 
+	const createGame = $(async () => {
+		const { suits: Suits } = state
+		const client = new RestClient()
+		const req = await client.post({ path: 'api/spider', payload: { Suits } })
+		if (req.ok) {
+			game.value = await req.json()
+			clock.formatted = '0:00'
+			startClock()
+		}
+	})
+
 	const deal = $(() => {
 		const { suits } = state
 		const deck = new Deck({ suits, decks: 2 })
@@ -274,15 +309,14 @@ export default component$(() => {
 		}
 		playing.value = true
 		moves.value = 0
-		clock.formatted = '0:00'
-		startClock()
+		createGame()
 		adjustDraggable()
 	})
 	return (
 		<div>
 			<div class="flex flex-wrap justify-between">
 				<div>
-					{!playing.value && (
+					{game.value.Status != GameStatus.Playing && (
 						<div>
 							<label for="suits" class="mr-2">
 								Suits
@@ -297,8 +331,16 @@ export default component$(() => {
 							<button onClick$={deal}>Deal</button>
 						</div>
 					)}
-					{playing.value && <button onClick$={quit}>Quit</button>}
+					{game.value.Status == GameStatus.Playing && (
+						<button onClick$={quit}>Quit</button>
+					)}
 				</div>
+				{game.value.Status != undefined && (
+					<div>
+						<strong class="mr-2">Status</strong>
+						{game.value.Status}
+					</div>
+				)}
 				<div>
 					<strong class="mr-2">Moves</strong>
 					{moves.value}
