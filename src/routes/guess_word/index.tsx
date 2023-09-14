@@ -1,4 +1,11 @@
-import { component$, useSignal, $, useStore, useTask$ } from '@builder.io/qwik'
+import {
+	component$,
+	useSignal,
+	$,
+	useStore,
+	useTask$,
+	useVisibleTask$,
+} from '@builder.io/qwik'
 import { Link } from '@builder.io/qwik-city'
 import type { GuessWord } from '../../types/guess-word.type'
 import { GuessWordOptions } from '../../components/guess-word-options/guess-word-options'
@@ -8,6 +15,11 @@ import { GuessWordGuessForm } from '../../components/guess-word-guess-form/guess
 import { GuessWordGuessList } from '../../components/guess-word-guess-list/guess-word-guess-list'
 import type { HintArgsType } from '../../types/hint-args.type'
 import { GuessWordHintList } from '../../components/guess-word-hint-list/guess-word-hint-list'
+import {
+	type SessionData,
+	blankSession,
+	sessionKey,
+} from '../../types/session-data.type'
 
 export default component$(() => {
 	const game = useSignal<GuessWord>({})
@@ -21,6 +33,8 @@ export default component$(() => {
 		Brown: [],
 	})
 	const showHints = useSignal(false)
+	const sesssion = useStore<SessionData>(blankSession)
+	const headers = useSignal<{ [key: string]: string }>({})
 
 	const newGame = $(async (Length: number) => {
 		length.value = Length
@@ -35,6 +49,7 @@ export default component$(() => {
 			const gameReq = await client.post({
 				path: 'api/guess_word',
 				payload: { WordId },
+				headers: headers.value,
 			})
 			if (gameReq.ok) game.value = await gameReq.json()
 		}
@@ -129,6 +144,17 @@ export default component$(() => {
 			hintArgs.Green.push('')
 		}
 		hints.value = []
+	})
+
+	useVisibleTask$(async () => {
+		const stored = sessionStorage.getItem(sessionKey)
+		if (stored) {
+			const data: SessionData = JSON.parse(stored)
+			sesssion.Token = data.Token
+			sesssion.UserName = data.UserName
+			sesssion.SignedIn = true
+			headers.value = { Authorization: `Bearer ${data.Token}` }
+		}
 	})
 	return (
 		<div>

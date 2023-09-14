@@ -1,4 +1,11 @@
-import { component$, useSignal, $, useStore, useTask$ } from '@builder.io/qwik'
+import {
+	component$,
+	useSignal,
+	$,
+	useStore,
+	useTask$,
+	useVisibleTask$,
+} from '@builder.io/qwik'
 import { Link } from '@builder.io/qwik-city'
 import type { SeaBattle } from '../../types/sea-battle.type'
 import {
@@ -17,6 +24,11 @@ import type { PointType } from '~/types/point-type.type'
 import type { SeaBattleShip } from '~/types/sea-batte-ship.type'
 import type { SeaBattleTurn } from '~/types/sea-battle-turn.type'
 import { SeaBattleOpponentGrid } from '~/components/sea-battle-opponent-grid/sea-battle-opponent-grid'
+import {
+	type SessionData,
+	blankSession,
+	sessionKey,
+} from '../../types/session-data.type'
 
 export default component$(() => {
 	const game = useSignal<SeaBattle>({})
@@ -33,6 +45,8 @@ export default component$(() => {
 	const playerTurns = useSignal<SeaBattleTurn[]>([])
 	const opponentShips = useSignal<SeaBattleShip[]>([])
 	const opponentTurns = useSignal<SeaBattleTurn[]>([])
+	const sesssion = useStore<SessionData>(blankSession)
+	const headers = useSignal<{ [key: string]: string }>({})
 
 	const newSeaBattle = $(async (options: SeaBattleGameOptions) => {
 		const { Axis, ships } = options
@@ -45,6 +59,7 @@ export default component$(() => {
 		const req = await client.post({
 			path: 'api/sea_battle',
 			payload: { Axis },
+			headers: headers.value,
 		})
 		if (req.ok) {
 			game.value = await req.json()
@@ -152,6 +167,17 @@ export default component$(() => {
 		for (let i = 0; i < current; i++) {
 			gridAxes.Horizontal.push(letters[i])
 			gridAxes.Vertical.push(i + 1)
+		}
+	})
+
+	useVisibleTask$(async () => {
+		const stored = sessionStorage.getItem(sessionKey)
+		if (stored) {
+			const data: SessionData = JSON.parse(stored)
+			sesssion.Token = data.Token
+			sesssion.UserName = data.UserName
+			sesssion.SignedIn = true
+			headers.value = { Authorization: `Bearer ${data.Token}` }
 		}
 	})
 

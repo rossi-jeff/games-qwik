@@ -6,6 +6,7 @@ import {
 	type QwikChangeEvent,
 	noSerialize,
 	type QwikDragEvent,
+	useVisibleTask$,
 } from '@builder.io/qwik'
 import { Link } from '@builder.io/qwik-city'
 import { PlayingCard } from '~/components/playing-card/playing-card'
@@ -15,6 +16,11 @@ import type { CardArray, CardContainerType } from '~/types/card-container.type'
 import type { Spider } from '../../types/spider.type'
 import { GameStatus } from '../../enum/game-status.enum'
 import { RestClient } from '../../lib/rest-client'
+import {
+	type SessionData,
+	blankSession,
+	sessionKey,
+} from '../../types/session-data.type'
 
 export default component$(() => {
 	const game = useSignal<Spider>({})
@@ -48,6 +54,8 @@ export default component$(() => {
 	const playing = useSignal(false)
 	const dragging = useSignal('')
 	const moves = useSignal(0)
+	const sesssion = useStore<SessionData>(blankSession)
+	const headers = useSignal<{ [key: string]: string }>({})
 
 	// begin timer code
 	const clock = useStore<{
@@ -270,7 +278,11 @@ export default component$(() => {
 	const createGame = $(async () => {
 		const { suits: Suits } = state
 		const client = new RestClient()
-		const req = await client.post({ path: 'api/spider', payload: { Suits } })
+		const req = await client.post({
+			path: 'api/spider',
+			payload: { Suits },
+			headers: headers.value,
+		})
 		if (req.ok) {
 			game.value = await req.json()
 			clock.formatted = '0:00'
@@ -311,6 +323,17 @@ export default component$(() => {
 		moves.value = 0
 		createGame()
 		adjustDraggable()
+	})
+
+	useVisibleTask$(async () => {
+		const stored = sessionStorage.getItem(sessionKey)
+		if (stored) {
+			const data: SessionData = JSON.parse(stored)
+			sesssion.Token = data.Token
+			sesssion.UserName = data.UserName
+			sesssion.SignedIn = true
+			headers.value = { Authorization: `Bearer ${data.Token}` }
+		}
 	})
 	return (
 		<div>

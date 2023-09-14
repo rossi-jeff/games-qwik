@@ -24,7 +24,7 @@ export const Navigation = component$<NavigationProps>(() => {
 		{ name: 'Yacht', path: '/yacht' },
 	]
 	return (
-		<div class="m-2 flex flex-wrap justify-between">
+		<div class="flex flex-wrap justify-between">
 			{links.map((l, i) => (
 				<Link key={i} href={l.path}>
 					{l.name}

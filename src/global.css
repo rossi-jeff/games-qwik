@@ -348,3 +348,16 @@ button.letter.Wrong {
 .card-container.highlight {
 	@apply bg-yellow-100;
 }
+
+.modal-overlay {
+	@apply fixed hidden inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-30;
+}
+
+.dialog-30p {
+	@apply hidden mx-auto relative w-[30%] bg-white p-4 border-black rounded top-24 z-40;
+}
+
+#sign-in-dialog input,
+#register-dialog input {
+	@apply w-full bg-white text-sm px-2 py-1 border border-black rounded;
+}
