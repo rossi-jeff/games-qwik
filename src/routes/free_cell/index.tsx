@@ -6,6 +6,7 @@ import {
 	type QwikDragEvent,
 	useSignal,
 	type NoSerialize,
+	useVisibleTask$,
 } from '@builder.io/qwik'
 import { Link } from '@builder.io/qwik-city'
 import type { CardContainerType } from '../../types/card-container.type'
@@ -15,6 +16,11 @@ import type { Card } from '../../lib/card.class'
 import type { FreeCell } from '../../types/free-cell.type'
 import { GameStatus } from '../../enum/game-status.enum'
 import { RestClient } from '../../lib/rest-client'
+import {
+	type SessionData,
+	blankSession,
+	sessionKey,
+} from '../../types/session-data.type'
 
 export default component$(() => {
 	const game = useSignal<FreeCell>({})
@@ -44,6 +50,8 @@ export default component$(() => {
 	const playing = useSignal(false)
 	const canAutoComplete = useSignal(false)
 	const moves = useSignal(0)
+	const sesssion = useStore<SessionData>(blankSession)
+	const headers = useSignal<{ [key: string]: string }>({})
 
 	// begin timer code
 	const clock = useStore<{
@@ -167,7 +175,11 @@ export default component$(() => {
 
 	const createGame = $(async () => {
 		const client = new RestClient()
-		const req = await client.post({ path: 'api/free_cell', payload: {} })
+		const req = await client.post({
+			path: 'api/free_cell',
+			payload: {},
+			headers: headers.value,
+		})
 		if (req.ok) {
 			game.value = await req.json()
 			clock.formatted = '0:00'
@@ -522,6 +534,17 @@ export default component$(() => {
 			moveCards(from, to, draggedCard.id)
 		}
 	)
+
+	useVisibleTask$(async () => {
+		const stored = sessionStorage.getItem(sessionKey)
+		if (stored) {
+			const data: SessionData = JSON.parse(stored)
+			sesssion.Token = data.Token
+			sesssion.UserName = data.UserName
+			sesssion.SignedIn = true
+			headers.value = { Authorization: `Bearer ${data.Token}` }
+		}
+	})
 
 	return (
 		<div>

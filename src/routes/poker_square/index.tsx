@@ -6,6 +6,7 @@ import {
 	useSignal,
 	type QwikChangeEvent,
 	noSerialize,
+	useVisibleTask$,
 } from '@builder.io/qwik'
 import { Link } from '@builder.io/qwik-city'
 import type { CardArray } from '../../types/card-container.type'
@@ -15,6 +16,11 @@ import { Card } from '../../lib/card.class'
 import type { PokerSquare } from '../../types/poker-square.type'
 import { GameStatus } from '../../enum/game-status.enum'
 import { RestClient } from '../../lib/rest-client'
+import {
+	type SessionData,
+	blankSession,
+	sessionKey,
+} from '../../types/session-data.type'
 
 export default component$(() => {
 	const game = useSignal<PokerSquare>({})
@@ -50,6 +56,8 @@ export default component$(() => {
 	const columns = [1, 2, 3, 4, 5]
 	const dragging = useSignal('')
 	const playing = useSignal(false)
+	const sesssion = useStore<SessionData>(blankSession)
+	const headers = useSignal<{ [key: string]: string }>({})
 
 	const noop = $(() => {})
 
@@ -69,7 +77,11 @@ export default component$(() => {
 
 	const createGame = $(async () => {
 		const client = new RestClient()
-		const req = await client.post({ path: 'api/poker_square', payload: {} })
+		const req = await client.post({
+			path: 'api/poker_square',
+			payload: {},
+			headers: headers.value,
+		})
 		if (req.ok) {
 			game.value = await req.json()
 			scores.total = 0
@@ -279,6 +291,17 @@ export default component$(() => {
 			updateScores()
 		}
 	)
+
+	useVisibleTask$(async () => {
+		const stored = sessionStorage.getItem(sessionKey)
+		if (stored) {
+			const data: SessionData = JSON.parse(stored)
+			sesssion.Token = data.Token
+			sesssion.UserName = data.UserName
+			sesssion.SignedIn = true
+			headers.value = { Authorization: `Bearer ${data.Token}` }
+		}
+	})
 	return (
 		<div>
 			<div class="flex flex-wrap justify-between">

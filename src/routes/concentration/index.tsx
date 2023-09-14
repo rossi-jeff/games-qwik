@@ -3,8 +3,9 @@ import {
 	useSignal,
 	$,
 	noSerialize,
-	type QwikMouseEvent,
 	useStore,
+	type QwikMouseEvent,
+	useVisibleTask$,
 } from '@builder.io/qwik'
 import { Link } from '@builder.io/qwik-city'
 import { PlayingCard } from '~/components/playing-card/playing-card'
@@ -14,6 +15,11 @@ import type { CardArray } from '~/types/card-container.type'
 import type { Concentration } from '../../types/concentration.type'
 import { GameStatus } from '../../enum/game-status.enum'
 import { RestClient } from '../../lib/rest-client'
+import {
+	type SessionData,
+	blankSession,
+	sessionKey,
+} from '../../types/session-data.type'
 
 export default component$(() => {
 	const game = useSignal<Concentration>({})
@@ -27,6 +33,8 @@ export default component$(() => {
 	const moves = useSignal(0)
 	const matches = useSignal(0)
 	const playing = useSignal(false)
+	const sesssion = useStore<SessionData>(blankSession)
+	const headers = useSignal<{ [key: string]: string }>({})
 
 	// begin timer code
 	const clock = useStore<{
@@ -85,7 +93,11 @@ export default component$(() => {
 
 	const createGame = $(async () => {
 		const client = new RestClient()
-		const req = await client.post({ path: 'api/concentration', payload: {} })
+		const req = await client.post({
+			path: 'api/concentration',
+			payload: {},
+			headers: headers.value,
+		})
 		if (req.ok) {
 			game.value = await req.json()
 			startClock()
@@ -208,6 +220,18 @@ export default component$(() => {
 	)
 
 	const noop = $(() => {})
+
+	useVisibleTask$(async () => {
+		const stored = sessionStorage.getItem(sessionKey)
+		if (stored) {
+			const data: SessionData = JSON.parse(stored)
+			sesssion.Token = data.Token
+			sesssion.UserName = data.UserName
+			sesssion.SignedIn = true
+			headers.value = { Authorization: `Bearer ${data.Token}` }
+		}
+	})
+
 	return (
 		<div>
 			<div class="flex flex-wrap justify-between">
