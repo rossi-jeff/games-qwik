@@ -1,4 +1,10 @@
-import { component$, useSignal, $ } from '@builder.io/qwik'
+import {
+	component$,
+	useSignal,
+	$,
+	useStore,
+	useVisibleTask$,
+} from '@builder.io/qwik'
 import { Link } from '@builder.io/qwik-city'
 import { CodeBreakerGuessForm } from '~/components/code-breaker-guess-form/code-breaker-guess-form'
 import { CodeBreakerGuessList } from '~/components/code-breaker-guess-list/code-breaker-guess-list'
@@ -9,11 +15,18 @@ import {
 import { RestClient } from '~/lib/rest-client'
 import type { CodeBreaker } from '~/types/code-breaker.type'
 import { CodeBreakerSolution } from '../../components/code-breaker-solution/code-breaker-solution'
+import {
+	type SessionData,
+	blankSession,
+	sessionKey,
+} from '../../types/session-data.type'
 
 export default component$(() => {
 	const game = useSignal<CodeBreaker>({})
 	const columns = useSignal(4)
 	const available = useSignal<string[]>([])
+	const sesssion = useStore<SessionData>(blankSession)
+	const headers = useSignal<{ [key: string]: string }>({})
 
 	const reloadGame = $(async () => {
 		const client = new RestClient()
@@ -32,6 +45,7 @@ export default component$(() => {
 		const req = await client.post({
 			path: 'api/code_breaker',
 			payload: { Colors, Columns },
+			headers: headers.value,
 		})
 		if (req.ok) {
 			game.value = await req.json()
@@ -50,6 +64,17 @@ export default component$(() => {
 			const res = await req.json()
 			console.log(res)
 			reloadGame()
+		}
+	})
+
+	useVisibleTask$(async () => {
+		const stored = sessionStorage.getItem(sessionKey)
+		if (stored) {
+			const data: SessionData = JSON.parse(stored)
+			sesssion.Token = data.Token
+			sesssion.UserName = data.UserName
+			sesssion.SignedIn = true
+			headers.value = { Authorization: `Bearer ${data.Token}` }
 		}
 	})
 
