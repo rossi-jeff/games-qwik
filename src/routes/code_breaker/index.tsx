@@ -20,6 +20,7 @@ import {
 	blankSession,
 	sessionKey,
 } from '../../types/session-data.type'
+import { GameStatus } from '../../enum/game-status.enum'
 
 export default component$(() => {
 	const game = useSignal<CodeBreaker>({})
@@ -27,13 +28,27 @@ export default component$(() => {
 	const available = useSignal<string[]>([])
 	const sesssion = useStore<SessionData>(blankSession)
 	const headers = useSignal<{ [key: string]: string }>({})
+	const inProgress = useSignal<CodeBreaker[]>([])
+
+	const loadInProgress = $(async () => {
+		const client = new RestClient()
+		const req = await client.get({
+			path: 'api/code_breaker/progress',
+			headers: headers.value,
+		})
+		if (req.ok) inProgress.value = await req.json()
+	})
 
 	const reloadGame = $(async () => {
 		const client = new RestClient()
 		const req = await client.get({ path: `api/code_breaker/${game.value.id}` })
 		if (req.ok) {
 			game.value = await req.json()
-			console.log(game.value)
+			if (game.value.Columns) columns.value = game.value.Columns
+			if (game.value.Available)
+				available.value = game.value.Available.split(',')
+			if (game.value.Status != GameStatus.Playing && sesssion.SignedIn)
+				loadInProgress()
 		}
 	})
 
@@ -67,6 +82,11 @@ export default component$(() => {
 		}
 	})
 
+	const continueGame = $((id: number) => {
+		game.value = { id }
+		reloadGame()
+	})
+
 	useVisibleTask$(async () => {
 		const stored = sessionStorage.getItem(sessionKey)
 		if (stored) {
@@ -75,6 +95,7 @@ export default component$(() => {
 			sesssion.UserName = data.UserName
 			sesssion.SignedIn = true
 			headers.value = { Authorization: `Bearer ${data.Token}` }
+			loadInProgress()
 		}
 	})
 
@@ -95,6 +116,30 @@ export default component$(() => {
 			)}
 			{game.value.Status != 'Playing' && (
 				<CodeBreakerOptions newCodeBreaker={newGame} />
+			)}
+			{game.value.Status != 'Playing' && inProgress.value.length > 0 && (
+				<div class="mt-2">
+					<div class="score-header">
+						<div class="cell-10-left"></div>
+						<div class="cell-20-center">Status</div>
+						<div class="cell-20-center">Score</div>
+						<div class="cell-20-center">Colors</div>
+						<div class="cell-20-right">Columns</div>
+					</div>
+					{inProgress.value.map((cb) => (
+						<div key={cb.id} class="score-row">
+							<div class="cell-10-left">
+								<button onClick$={() => continueGame(cb.id || 0)}>
+									Continue
+								</button>
+							</div>
+							<div class="cell-20-center">{cb.Status}</div>
+							<div class="cell-20-center">{cb.Score}</div>
+							<div class="cell-20-center">{cb.Colors}</div>
+							<div class="cell-20-right">{cb.Columns}</div>
+						</div>
+					))}
+				</div>
 			)}
 			<div>
 				<Link href="/code_breaker/scores">Top Scores</Link>

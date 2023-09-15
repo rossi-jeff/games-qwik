@@ -30,6 +30,16 @@ export default component$(() => {
 	})
 	const sesssion = useStore<SessionData>(blankSession)
 	const headers = useSignal<{ [key: string]: string }>({})
+	const inProgress = useSignal<Yacht[]>([])
+
+	const loadInProgress = $(async () => {
+		const client = new RestClient()
+		const req = await client.get({
+			path: 'api/yacht/progress',
+			headers: headers.value,
+		})
+		if (req.ok) inProgress.value = await req.json()
+	})
 
 	const newGame = $(async () => {
 		const client = new RestClient()
@@ -46,7 +56,10 @@ export default component$(() => {
 		if (!game.value.id) return
 		const client = new RestClient()
 		const req = await client.get({ path: `api/yacht/${game.value.id}` })
-		if (req.ok) game.value = await req.json()
+		if (req.ok) {
+			game.value = await req.json()
+			if (game.value.NumTurns == 12) loadInProgress()
+		}
 	})
 
 	const roll = $(async (Keep: number[]) => {
@@ -97,6 +110,11 @@ export default component$(() => {
 
 	const noop = $(() => {})
 
+	const continueGame = $((id: number) => {
+		game.value = { id }
+		reloadGame()
+	})
+
 	useVisibleTask$(async () => {
 		const stored = sessionStorage.getItem(sessionKey)
 		if (stored) {
@@ -105,6 +123,7 @@ export default component$(() => {
 			sesssion.UserName = data.UserName
 			sesssion.SignedIn = true
 			headers.value = { Authorization: `Bearer ${data.Token}` }
+			loadInProgress()
 		}
 	})
 	return (
@@ -156,6 +175,27 @@ export default component$(() => {
 					turns={game.value.turns}
 				/>
 			)}
+			{(game.value.NumTurns == undefined || game.value.NumTurns == 12) &&
+				inProgress.value.length > 0 && (
+					<div class="mt-2">
+						<div class="score-header">
+							<div class="cell-10-left"></div>
+							<div class="cell-20-center">Turns</div>
+							<div class="cell-20-right">Score</div>
+						</div>
+						{inProgress.value.map((y) => (
+							<div key={y.id} class="score-row">
+								<div class="cell-10-left">
+									<button onClick$={() => continueGame(y.id || 0)}>
+										Continue
+									</button>
+								</div>
+								<div class="cell-20-center">{y.NumTurns}</div>
+								<div class="cell-20-right">{y.Total}</div>
+							</div>
+						))}
+					</div>
+				)}
 			<div>
 				<Link href="/yacht/scores">Top Scores</Link>
 			</div>

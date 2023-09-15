@@ -130,28 +130,30 @@ export const HeaderBar = component$<HeaderBarProps>(() => {
 			<div id="auth-overlay" class="modal-overlay">
 				<div id="register-dialog" class="dialog-30p">
 					<h1>Register</h1>
-					<div>
-						<label for="UserName" class="block">
-							User Name
-						</label>
-						<input
-							type="text"
-							name="UserName"
-							id="register-UserName"
-							onChange$={inputChanged}
-						/>
-					</div>
-					<div>
-						<label for="password" class="block">
-							Password
-						</label>
-						<input
-							type="password"
-							name="password"
-							id="register-password"
-							onChange$={inputChanged}
-						/>
-					</div>
+					<form onSubmit$={() => false}>
+						<div>
+							<label for="UserName" class="block">
+								User Name
+							</label>
+							<input
+								type="text"
+								name="UserName"
+								id="register-UserName"
+								onChange$={inputChanged}
+							/>
+						</div>
+						<div>
+							<label for="password" class="block">
+								Password
+							</label>
+							<input
+								type="password"
+								name="password"
+								id="register-password"
+								onChange$={inputChanged}
+							/>
+						</div>
+					</form>
 					<div class="flex justify-between">
 						<button onClick$={closeRegister}>Cancel</button>
 						<button onClick$={register}>Register</button>
@@ -159,28 +161,30 @@ export const HeaderBar = component$<HeaderBarProps>(() => {
 				</div>
 				<div id="sign-in-dialog" class="dialog-30p">
 					<h1>Sign In</h1>
-					<div>
-						<label for="UserName" class="block">
-							User Name
-						</label>
-						<input
-							type="text"
-							name="UserName"
-							id="sign-in-UserName"
-							onChange$={inputChanged}
-						/>
-					</div>
-					<div>
-						<label for="password" class="block">
-							Password
-						</label>
-						<input
-							type="password"
-							name="password"
-							id="sign-in-password"
-							onChange$={inputChanged}
-						/>
-					</div>
+					<form onSubmit$={() => false}>
+						<div>
+							<label for="UserName" class="block">
+								User Name
+							</label>
+							<input
+								type="text"
+								name="UserName"
+								id="sign-in-UserName"
+								onChange$={inputChanged}
+							/>
+						</div>
+						<div>
+							<label for="password" class="block">
+								Password
+							</label>
+							<input
+								type="password"
+								name="password"
+								id="sign-in-password"
+								onChange$={inputChanged}
+							/>
+						</div>
+					</form>
 					<div class="flex justify-between">
 						<button onClick$={closeSignIn}>Cancel</button>
 						<button onClick$={signIn}>Sign In</button>

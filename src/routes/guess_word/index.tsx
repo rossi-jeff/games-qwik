@@ -20,6 +20,7 @@ import {
 	blankSession,
 	sessionKey,
 } from '../../types/session-data.type'
+import { GameStatus } from '../../enum/game-status.enum'
 
 export default component$(() => {
 	const game = useSignal<GuessWord>({})
@@ -35,6 +36,16 @@ export default component$(() => {
 	const showHints = useSignal(false)
 	const sesssion = useStore<SessionData>(blankSession)
 	const headers = useSignal<{ [key: string]: string }>({})
+	const inProgress = useSignal<GuessWord[]>([])
+
+	const loadInProgress = $(async () => {
+		const client = new RestClient()
+		const req = await client.get({
+			path: 'api/guess_word/progress',
+			headers: headers.value,
+		})
+		if (req.ok) inProgress.value = await req.json()
+	})
 
 	const newGame = $(async (Length: number) => {
 		length.value = Length
@@ -118,6 +129,10 @@ export default component$(() => {
 		if (req.ok) {
 			game.value = await req.json()
 			if (showHints.value) fetchHints()
+			if (game.value.word && !word.value.id) word.value = game.value.word
+			if (word.value.Length) length.value = word.value.Length
+			if (game.value.Status != GameStatus.Playing && sesssion.SignedIn)
+				loadInProgress()
 		}
 	})
 
@@ -131,6 +146,11 @@ export default component$(() => {
 			payload: { Guess, Word },
 		})
 		if (req.ok) reloadGame()
+	})
+
+	const continueGame = $((id: number) => {
+		game.value = { id }
+		reloadGame()
 	})
 
 	useTask$(({ track }) => {
@@ -154,6 +174,7 @@ export default component$(() => {
 			sesssion.UserName = data.UserName
 			sesssion.SignedIn = true
 			headers.value = { Authorization: `Bearer ${data.Token}` }
+			loadInProgress()
 		}
 	})
 	return (
@@ -176,6 +197,30 @@ export default component$(() => {
 			)}
 			{game.value.Status != 'Playing' && (
 				<GuessWordOptions newGuessWord={newGame} />
+			)}
+			{game.value.Status != 'Playing' && inProgress.value.length > 0 && (
+				<div class="mt-2">
+					<div class="score-header">
+						<div class="cell-10-left"></div>
+						<div class="cell-20-center">Status</div>
+						<div class="cell-20-center">Score</div>
+						<div class="cell-20-right">Length</div>
+					</div>
+					{inProgress.value.map((gw) => (
+						<div key={gw.id} class="score-row">
+							<div class="cell-10-left">
+								<button onClick$={() => continueGame(gw.id || 0)}>
+									Continue
+								</button>
+							</div>
+							<div class="cell-20-center">{gw.Status}</div>
+							<div class="cell-20-center">{gw.Score}</div>
+							<div class="cell-20-right">
+								{gw.word ? gw.word.Length : 'N/A'}
+							</div>
+						</div>
+					))}
+				</div>
 			)}
 			<div>
 				<Link href="/guess_word/scores">Top Scores</Link>
