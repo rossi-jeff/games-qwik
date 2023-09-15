@@ -47,6 +47,16 @@ export default component$(() => {
 	const opponentTurns = useSignal<SeaBattleTurn[]>([])
 	const sesssion = useStore<SessionData>(blankSession)
 	const headers = useSignal<{ [key: string]: string }>({})
+	const inProgress = useSignal<SeaBattle[]>([])
+
+	const loadInProgress = $(async () => {
+		const client = new RestClient()
+		const req = await client.get({
+			path: 'api/sea_battle/progress',
+			headers: headers.value,
+		})
+		if (req.ok) inProgress.value = await req.json()
+	})
 
 	const newSeaBattle = $(async (options: SeaBattleGameOptions) => {
 		const { Axis, ships } = options
@@ -88,6 +98,9 @@ export default component$(() => {
 					(t) => t.Navy == Navy.Opponent
 				)
 			}
+			if (game.value.Axis) axis.value = game.value.Axis
+			if (game.value.Status != GameStatus.Playing && sesssion.SignedIn)
+				loadInProgress()
 		}
 	})
 
@@ -159,6 +172,11 @@ export default component$(() => {
 		fired.value = false
 	})
 
+	const continueGame = $((id: number) => {
+		game.value = { id }
+		reloadGame()
+	})
+
 	useTask$(({ track }) => {
 		const current = track(() => axis.value)
 		gridAxes.Horizontal = []
@@ -178,6 +196,7 @@ export default component$(() => {
 			sesssion.UserName = data.UserName
 			sesssion.SignedIn = true
 			headers.value = { Authorization: `Bearer ${data.Token}` }
+			loadInProgress()
 		}
 	})
 
@@ -219,6 +238,23 @@ export default component$(() => {
 			{game.value.Status != GameStatus.Playing && (
 				<SeaBattleOptions newSeaBattle={newSeaBattle} />
 			)}
+			{game.value.Status != GameStatus.Playing &&
+				inProgress.value.length > 0 && (
+					<div>
+						{inProgress.value.map((sb) => (
+							<div key={sb.id} class="score-row">
+								<div class="cell-10-left">
+									<button onClick$={() => continueGame(sb.id || 0)}>
+										Continue
+									</button>
+								</div>
+								<div class="cell-20-center">{sb.Status}</div>
+								<div class="cell-20-center">{sb.Score}</div>
+								<div class="cell-20-right">{sb.Axis}</div>
+							</div>
+						))}
+					</div>
+				)}
 			<div>
 				<Link href="/sea_battle/scores">Top Scores</Link>
 			</div>

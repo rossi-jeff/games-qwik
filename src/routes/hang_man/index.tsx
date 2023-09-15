@@ -29,6 +29,16 @@ export default component$(() => {
 	const word = useSignal<Word>({})
 	const sesssion = useStore<SessionData>(blankSession)
 	const headers = useSignal<{ [key: string]: string }>({})
+	const inProgress = useSignal<HangMan[]>([])
+
+	const loadInProgress = $(async () => {
+		const client = new RestClient()
+		const req = await client.get({
+			path: 'api/hang_man/progress',
+			headers: headers.value,
+		})
+		if (req.ok) inProgress.value = await req.json()
+	})
 
 	const newGame = $(async (options: HangManOptionsType) => {
 		game.value = {}
@@ -58,7 +68,12 @@ export default component$(() => {
 		if (!game.value.id) return
 		const client = new RestClient()
 		const req = await client.get({ path: `api/hang_man/${game.value.id}` })
-		if (req.ok) game.value = await req.json()
+		if (req.ok) {
+			game.value = await req.json()
+			if (game.value.word && !word.value.id) word.value = game.value.word
+			if (game.value.Status != GameStatus.Playing && sesssion.SignedIn)
+				loadInProgress()
+		}
 	})
 
 	const guessLetter = $(async (letter: string) => {
@@ -76,6 +91,11 @@ export default component$(() => {
 		}
 	})
 
+	const continueGame = $((id: number) => {
+		game.value = { id, Correct: '', Wrong: '' }
+		reloadGame()
+	})
+
 	useVisibleTask$(async () => {
 		const stored = sessionStorage.getItem(sessionKey)
 		if (stored) {
@@ -84,6 +104,7 @@ export default component$(() => {
 			sesssion.UserName = data.UserName
 			sesssion.SignedIn = true
 			headers.value = { Authorization: `Bearer ${data.Token}` }
+			loadInProgress()
 		}
 	})
 	return (
@@ -110,6 +131,24 @@ export default component$(() => {
 			{game.value.Status != GameStatus.Playing && (
 				<HangManOptions newHangMan={newGame} />
 			)}
+			{game.value.Status != GameStatus.Playing &&
+				inProgress.value.length > 0 && (
+					<div>
+						{inProgress.value.map((hm) => (
+							<div key={hm.id} class="score-row">
+								<div class="cell-10-left">
+									<button onClick$={() => continueGame(hm.id || 0)}>
+										Continue
+									</button>
+								</div>
+								<div class="cell-20-center">{hm.Status}</div>
+								<div class="cell-20-center">{hm.Score}</div>
+								<div class="cell-20-center">{hm.Correct}</div>
+								<div class="cell-20-right">{hm.Wrong}</div>
+							</div>
+						))}
+					</div>
+				)}
 			<div>
 				<Link href="/hang_man/scores">Top Scores</Link>
 			</div>

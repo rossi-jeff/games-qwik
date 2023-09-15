@@ -21,6 +21,16 @@ export default component$(() => {
 	const game = useSignal<TenGrand>({})
 	const sesssion = useStore<SessionData>(blankSession)
 	const headers = useSignal<{ [key: string]: string }>({})
+	const inProgress = useSignal<TenGrand[]>([])
+
+	const loadInProgress = $(async () => {
+		const client = new RestClient()
+		const req = await client.get({
+			path: 'api/ten_grand/progress',
+			headers: headers.value,
+		})
+		if (req.ok) inProgress.value = await req.json()
+	})
 
 	const newGame = $(async () => {
 		const client = new RestClient()
@@ -36,7 +46,16 @@ export default component$(() => {
 		if (!game.value.id) return
 		const client = new RestClient()
 		const req = await client.get({ path: `api/ten_grand/${game.value.id}` })
-		if (req.ok) game.value = await req.json()
+		if (req.ok) {
+			game.value = await req.json()
+			if (game.value.Status != GameStatus.Playing && sesssion.SignedIn)
+				loadInProgress()
+		}
+	})
+
+	const continueGame = $((id: number) => {
+		game.value = { id }
+		reloadGame()
 	})
 
 	useVisibleTask$(async () => {
@@ -47,6 +66,7 @@ export default component$(() => {
 			sesssion.UserName = data.UserName
 			sesssion.SignedIn = true
 			headers.value = { Authorization: `Bearer ${data.Token}` }
+			loadInProgress()
 		}
 	})
 	return (
@@ -58,6 +78,22 @@ export default component$(() => {
 				<button onClick$={newGame}>New Game</button>
 			)}
 			{game.value.turns && <TenGrandScoreCard tenGrand={game.value} />}
+			{game.value.Status != GameStatus.Playing &&
+				inProgress.value.length > 0 && (
+					<div>
+						{inProgress.value.map((tg) => (
+							<div key={tg.id} class="score-row">
+								<div class="cell-10-left">
+									<button onClick$={() => continueGame(tg.id || 0)}>
+										Continue
+									</button>
+								</div>
+								<div class="cell-20-center">{tg.Status}</div>
+								<div class="cell-20-right">{tg.Score}</div>
+							</div>
+						))}
+					</div>
+				)}
 			<div>
 				<Link href="/ten_grand/scores">Top Scores</Link>
 			</div>
