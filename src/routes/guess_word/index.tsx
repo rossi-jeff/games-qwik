@@ -199,7 +199,13 @@ export default component$(() => {
 				<GuessWordOptions newGuessWord={newGame} />
 			)}
 			{game.value.Status != 'Playing' && inProgress.value.length > 0 && (
-				<div>
+				<div class="mt-2">
+					<div class="score-header">
+						<div class="cell-10-left"></div>
+						<div class="cell-20-center">Status</div>
+						<div class="cell-20-center">Score</div>
+						<div class="cell-20-right">Length</div>
+					</div>
 					{inProgress.value.map((gw) => (
 						<div key={gw.id} class="score-row">
 							<div class="cell-10-left">
@@ -207,12 +213,8 @@ export default component$(() => {
 									Continue
 								</button>
 							</div>
-							<div class="cell-48-left">
-								{gw.user ? gw.user.UserName : 'Anonymous'}
-							</div>
 							<div class="cell-20-center">{gw.Status}</div>
 							<div class="cell-20-center">{gw.Score}</div>
-							<div class="cell-20-center">{gw.word ? gw.word.Word : 'N/A'}</div>
 							<div class="cell-20-right">
 								{gw.word ? gw.word.Length : 'N/A'}
 							</div>

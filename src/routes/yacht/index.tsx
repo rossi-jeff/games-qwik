@@ -177,7 +177,12 @@ export default component$(() => {
 			)}
 			{(game.value.NumTurns == undefined || game.value.NumTurns == 12) &&
 				inProgress.value.length > 0 && (
-					<div>
+					<div class="mt-2">
+						<div class="score-header">
+							<div class="cell-10-left"></div>
+							<div class="cell-20-center">Turns</div>
+							<div class="cell-20-right">Score</div>
+						</div>
 						{inProgress.value.map((y) => (
 							<div key={y.id} class="score-row">
 								<div class="cell-10-left">

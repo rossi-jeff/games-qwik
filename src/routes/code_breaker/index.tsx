@@ -118,16 +118,20 @@ export default component$(() => {
 				<CodeBreakerOptions newCodeBreaker={newGame} />
 			)}
 			{game.value.Status != 'Playing' && inProgress.value.length > 0 && (
-				<div>
+				<div class="mt-2">
+					<div class="score-header">
+						<div class="cell-10-left"></div>
+						<div class="cell-20-center">Status</div>
+						<div class="cell-20-center">Score</div>
+						<div class="cell-20-center">Colors</div>
+						<div class="cell-20-right">Columns</div>
+					</div>
 					{inProgress.value.map((cb) => (
 						<div key={cb.id} class="score-row">
 							<div class="cell-10-left">
 								<button onClick$={() => continueGame(cb.id || 0)}>
 									Continue
 								</button>
-							</div>
-							<div class="cell-48-left">
-								{cb.user ? cb.user.UserName : 'Anonymous'}
 							</div>
 							<div class="cell-20-center">{cb.Status}</div>
 							<div class="cell-20-center">{cb.Score}</div>

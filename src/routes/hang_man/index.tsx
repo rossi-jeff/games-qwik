@@ -133,7 +133,14 @@ export default component$(() => {
 			)}
 			{game.value.Status != GameStatus.Playing &&
 				inProgress.value.length > 0 && (
-					<div>
+					<div class="mt-2">
+						<div class="score-header">
+							<div class="cell-10-left"></div>
+							<div class="cell-20-center">Status</div>
+							<div class="cell-20-center">Score</div>
+							<div class="cell-20-center">Correct</div>
+							<div class="cell-20-right">Wrong</div>
+						</div>
 						{inProgress.value.map((hm) => (
 							<div key={hm.id} class="score-row">
 								<div class="cell-10-left">

@@ -80,7 +80,12 @@ export default component$(() => {
 			{game.value.turns && <TenGrandScoreCard tenGrand={game.value} />}
 			{game.value.Status != GameStatus.Playing &&
 				inProgress.value.length > 0 && (
-					<div>
+					<div class="mt-2">
+						<div class="score-header">
+							<div class="cell-10-left"></div>
+							<div class="cell-20-center">Status</div>
+							<div class="cell-20-right">Score</div>
+						</div>
 						{inProgress.value.map((tg) => (
 							<div key={tg.id} class="score-row">
 								<div class="cell-10-left">
