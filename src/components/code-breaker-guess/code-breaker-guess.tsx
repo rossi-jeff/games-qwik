@@ -8,7 +8,7 @@ export interface CodeBreakerGuessProps {
 export const CodeBreakerGuess = component$<CodeBreakerGuessProps>((props) => {
   const { guess } = props;
   return (
-    <div class="flex flex-wrap mb-2">
+    <div class="code-breaker-guess">
       <div class="code-breaker-guess-colors">
         {guess.colors &&
           guess.colors.map((color) => (
