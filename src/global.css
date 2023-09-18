@@ -10,7 +10,8 @@ body {
 	@apply m-0 p-0 bg-champagne text-dk-green;
 }
 
-label {
+label,
+a {
 	@apply font-bold;
 }
 
@@ -22,15 +23,25 @@ input,
 select {
 	@apply text-sm px-2 py-1 border-dk-green border rounded;
 }
+
 button {
 	@apply bg-dk-green rounded text-champagne text-sm px-2 py-1;
 }
+
 button:hover {
 	@apply underline;
 }
 
 a:hover {
 	@apply underline;
+}
+
+ul {
+	@apply list-disc list-inside my-2;
+}
+
+li {
+	@apply ml-2 mb-2;
 }
 
 .score-list {
