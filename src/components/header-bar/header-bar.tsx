@@ -106,7 +106,7 @@ export const HeaderBar = component$<HeaderBarProps>(() => {
 
 	return (
 		<div class="m-2">
-			<div class="flex flex-wrap justify-between">
+			<div class="flex flex-wrap justify-between mb-2">
 				<h1>Games by Jeff Rossi</h1>
 				{sesssion.SignedIn ? (
 					<div class="flex flex-wrap">
@@ -131,7 +131,7 @@ export const HeaderBar = component$<HeaderBarProps>(() => {
 				<div id="register-dialog" class="dialog-30p">
 					<h1>Register</h1>
 					<form onSubmit$={() => false}>
-						<div>
+						<div class="mb-2">
 							<label for="UserName" class="block">
 								User Name
 							</label>
@@ -142,7 +142,7 @@ export const HeaderBar = component$<HeaderBarProps>(() => {
 								onChange$={inputChanged}
 							/>
 						</div>
-						<div>
+						<div class="mb-2">
 							<label for="password" class="block">
 								Password
 							</label>
@@ -162,7 +162,7 @@ export const HeaderBar = component$<HeaderBarProps>(() => {
 				<div id="sign-in-dialog" class="dialog-30p">
 					<h1>Sign In</h1>
 					<form onSubmit$={() => false}>
-						<div>
+						<div class="mb-2">
 							<label for="UserName" class="block">
 								User Name
 							</label>
@@ -173,7 +173,7 @@ export const HeaderBar = component$<HeaderBarProps>(() => {
 								onChange$={inputChanged}
 							/>
 						</div>
-						<div>
+						<div class="mb-2">
 							<label for="password" class="block">
 								Password
 							</label>

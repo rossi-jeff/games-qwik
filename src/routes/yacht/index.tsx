@@ -139,7 +139,9 @@ export default component$(() => {
 							disabled={flags.rollTwo}
 						/>
 					) : (
-						<button onClick$={firstRoll}>First Roll</button>
+						<button onClick$={firstRoll} class="my-2">
+							First Roll
+						</button>
 					)}
 					{turn.value.RollTwo && (
 						<YachtTurnDisplay

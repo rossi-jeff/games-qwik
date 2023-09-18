@@ -76,9 +76,11 @@ export const YachtTurnDisplay = component$<YachtTurnDisplayProps>((props) => {
 					</div>
 				))}
 			</div>
-			<button onClick$={rollClicked} disabled={disabled}>
-				{btnLabel}
-			</button>
+			{btnLabel != '' && (
+				<button onClick$={rollClicked} disabled={disabled}>
+					{btnLabel}
+				</button>
+			)}
 		</div>
 	)
 })
