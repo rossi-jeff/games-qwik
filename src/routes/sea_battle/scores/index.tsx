@@ -2,7 +2,7 @@ import { component$, useSignal, useTask$, $ } from '@builder.io/qwik'
 import type { SeaBattle } from '../../../types/sea-battle.type'
 import { RestClient } from '../../../lib/rest-client'
 import { PaginationControls } from '~/components/pagination-controls/pagination-controls'
-import { DocumentHead, Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 
 export default component$(() => {
 	const path = 'api/sea_battle'

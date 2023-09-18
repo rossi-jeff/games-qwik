@@ -1,5 +1,10 @@
 import { component$, useSignal, useStore, useTask$, $ } from '@builder.io/qwik'
-import { DocumentHead, Link, useLocation } from '@builder.io/qwik-city'
+import {
+	type DocumentHead,
+	Link,
+	useLocation,
+	type StaticGenerateHandler,
+} from '@builder.io/qwik-city'
 import type { SeaBattle } from '../../../../types/sea-battle.type'
 import type { SeaBattleShip } from '../../../../types/sea-batte-ship.type'
 import type { SeaBattleTurn } from '../../../../types/sea-battle-turn.type'
@@ -95,4 +100,20 @@ export const head: DocumentHead = {
 			content: 'Games by Jeff Rossi',
 		},
 	],
+}
+
+export const onStaticGenerate: StaticGenerateHandler = async () => {
+	const client = new RestClient()
+	const req = await client.get({
+		path: 'api/sea_battle',
+		params: { Limit: 100 },
+	})
+	if (req.ok) {
+		const data: { Items: SeaBattle[] } = await req.json()
+		return {
+			params: data.Items.map((i) => {
+				return { id: i.id ? i.id.toString() : '' }
+			}),
+		}
+	} else return { params: [] }
 }

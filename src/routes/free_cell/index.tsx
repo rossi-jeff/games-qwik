@@ -8,7 +8,7 @@ import {
 	type NoSerialize,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { DocumentHead, Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import type { CardContainerType } from '../../types/card-container.type'
 import { Deck } from '../../lib/deck.class'
 import { PlayingCard } from '../../components/playing-card/playing-card'

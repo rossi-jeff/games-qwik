@@ -5,7 +5,7 @@ import {
 	useStore,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { DocumentHead, Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import { YachtScoreCard } from '~/components/yacht-score-card/yacht-score-card'
 import { YachtScoreOptionsList } from '~/components/yacht-score-options-list/yacht-score-options-list'
 import { YachtTurnDisplay } from '~/components/yacht-turn-display/yacht-turn-display'

@@ -5,7 +5,7 @@ import {
 	useVisibleTask$,
 	useStore,
 } from '@builder.io/qwik'
-import { DocumentHead, Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import { HangManDrawing } from '~/components/hang-man-drawing/hang-man-drawing'
 import { HangManLetters } from '~/components/hang-man-letters/hang-man-letters'
 import {

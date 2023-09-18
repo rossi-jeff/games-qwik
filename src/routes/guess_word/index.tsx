@@ -6,7 +6,7 @@ import {
 	useTask$,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { DocumentHead, Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import type { GuessWord } from '../../types/guess-word.type'
 import { GuessWordOptions } from '../../components/guess-word-options/guess-word-options'
 import type { Word } from '../../types/word.type'

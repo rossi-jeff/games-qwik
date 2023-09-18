@@ -5,7 +5,7 @@ import {
 	useStore,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { DocumentHead, Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import { CodeBreakerGuessForm } from '~/components/code-breaker-guess-form/code-breaker-guess-form'
 import { CodeBreakerGuessList } from '~/components/code-breaker-guess-list/code-breaker-guess-list'
 import {

@@ -1,5 +1,10 @@
 import { component$, useSignal, useTask$ } from '@builder.io/qwik'
-import { DocumentHead, Link, useLocation } from '@builder.io/qwik-city'
+import {
+	type DocumentHead,
+	Link,
+	useLocation,
+	type StaticGenerateHandler,
+} from '@builder.io/qwik-city'
 import { HangManDrawing } from '~/components/hang-man-drawing/hang-man-drawing'
 import { HangManSolution } from '~/components/hang-man-solution/hang-man-solution'
 import { HangManWordDisplay } from '~/components/hang-man-word-display/hang-man-word-display'
@@ -47,4 +52,20 @@ export const head: DocumentHead = {
 			content: 'Games by Jeff Rossi',
 		},
 	],
+}
+
+export const onStaticGenerate: StaticGenerateHandler = async () => {
+	const client = new RestClient()
+	const req = await client.get({
+		path: 'api/hang_man',
+		params: { Limit: 100 },
+	})
+	if (req.ok) {
+		const data: { Items: HangMan[] } = await req.json()
+		return {
+			params: data.Items.map((i) => {
+				return { id: i.id ? i.id.toString() : '' }
+			}),
+		}
+	} else return { params: [] }
 }

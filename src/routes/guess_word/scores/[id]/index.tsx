@@ -1,5 +1,10 @@
 import { component$, useSignal, useTask$ } from '@builder.io/qwik'
-import { DocumentHead, Link, useLocation } from '@builder.io/qwik-city'
+import {
+	type DocumentHead,
+	Link,
+	useLocation,
+	type StaticGenerateHandler,
+} from '@builder.io/qwik-city'
 import type { GuessWord } from '../../../../types/guess-word.type'
 import { GuessWordGuessList } from '../../../../components/guess-word-guess-list/guess-word-guess-list'
 import { GuessWordSolution } from '../../../../components/guess-word-solution/guess-word-solution'
@@ -36,4 +41,20 @@ export const head: DocumentHead = {
 			content: 'Games by Jeff Rossi',
 		},
 	],
+}
+
+export const onStaticGenerate: StaticGenerateHandler = async () => {
+	const client = new RestClient()
+	const req = await client.get({
+		path: 'api/guess_word',
+		params: { Limit: 100 },
+	})
+	if (req.ok) {
+		const data: { Items: GuessWord[] } = await req.json()
+		return {
+			params: data.Items.map((i) => {
+				return { id: i.id ? i.id.toString() : '' }
+			}),
+		}
+	} else return { params: [] }
 }

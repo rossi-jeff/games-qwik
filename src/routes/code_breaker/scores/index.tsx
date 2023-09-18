@@ -2,7 +2,7 @@ import { component$, useTask$, $, useSignal } from '@builder.io/qwik'
 import { RestClient } from '../../../lib/rest-client'
 import type { CodeBreaker } from '../../../types/code-breaker.type'
 import { PaginationControls } from '../../../components/pagination-controls/pagination-controls'
-import { DocumentHead, Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 
 export default component$(() => {
 	const path = 'api/code_breaker'

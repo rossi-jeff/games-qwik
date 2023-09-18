@@ -10,7 +10,7 @@ import { GameStatus } from '../../enum/game-status.enum'
 import { TenGrandCurrentTurn } from '../../components/ten-grand-current-turn/ten-grand-current-turn'
 import { TenGrandScoreCard } from '../../components/ten-grand-score-card/ten-grand-score-card'
 import { RestClient } from '../../lib/rest-client'
-import { DocumentHead, Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import {
 	type SessionData,
 	blankSession,

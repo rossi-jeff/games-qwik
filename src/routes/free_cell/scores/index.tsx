@@ -2,7 +2,7 @@ import { component$, useSignal, useTask$, $ } from '@builder.io/qwik'
 import type { FreeCell } from '../../../types/free-cell.type'
 import { RestClient } from '../../../lib/rest-client'
 import { PaginationControls } from '~/components/pagination-controls/pagination-controls'
-import { DocumentHead } from '@builder.io/qwik-city'
+import { type DocumentHead } from '@builder.io/qwik-city'
 
 export default component$(() => {
 	const path = 'api/free_cell'

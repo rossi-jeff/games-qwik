@@ -1,5 +1,5 @@
 import { component$, useSignal, useTask$, $ } from '@builder.io/qwik'
-import { DocumentHead, Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import { PaginationControls } from '~/components/pagination-controls/pagination-controls'
 import { RestClient } from '~/lib/rest-client'
 import type { TenGrand } from '~/types/ten-grand.type'
