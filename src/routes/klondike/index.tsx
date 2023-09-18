@@ -9,7 +9,7 @@ import {
 	type NoSerialize,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import { PlayingCard } from '~/components/playing-card/playing-card'
 import type { Card } from '~/lib/card.class'
 import { Deck } from '~/lib/deck.class'
@@ -519,7 +519,7 @@ export default component$(() => {
 
 	return (
 		<div>
-			<div class="flex flex-wrap justify-between">
+			<div class="flex flex-wrap justify-between mb-4">
 				<div>
 					{game.value.Status != GameStatus.Playing && (
 						<button onClick$={deal} class="mr-4">
@@ -788,3 +788,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Klondike',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

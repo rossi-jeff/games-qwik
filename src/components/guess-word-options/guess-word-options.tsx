@@ -23,8 +23,15 @@ export const GuessWordOptions = component$<GuessWordOptionsProps>((props) => {
 	})
 	return (
 		<div>
-			<label for="length">Length</label>
-			<select name="length" value={length.value} onChange$={lengthChanged}>
+			<label for="length" class="mr-2">
+				Length
+			</label>
+			<select
+				name="length"
+				value={length.value}
+				onChange$={lengthChanged}
+				class="mr-2"
+			>
 				{lengths.map((l) => (
 					<option key={l} value={l}>
 						{l.toString()}

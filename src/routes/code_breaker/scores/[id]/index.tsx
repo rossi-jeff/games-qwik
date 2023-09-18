@@ -1,5 +1,10 @@
 import { component$, useSignal, useTask$ } from '@builder.io/qwik'
-import { Link, useLocation } from '@builder.io/qwik-city'
+import {
+	type DocumentHead,
+	Link,
+	useLocation,
+	type StaticGenerateHandler,
+} from '@builder.io/qwik-city'
 import type { CodeBreaker } from '../../../../types/code-breaker.type'
 import { RestClient } from '../../../../lib/rest-client'
 import { CodeBreakerGuessList } from '../../../../components/code-breaker-guess-list/code-breaker-guess-list'
@@ -27,3 +32,29 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Code Breaker',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}
+
+export const onStaticGenerate: StaticGenerateHandler = async () => {
+	const client = new RestClient()
+	const req = await client.get({
+		path: 'api/code_breaker',
+		params: { Limit: 100 },
+	})
+	if (req.ok) {
+		const data: { Items: CodeBreaker[] } = await req.json()
+		return {
+			params: data.Items.map((i) => {
+				return { id: i.id ? i.id.toString() : '' }
+			}),
+		}
+	} else return { params: [] }
+}

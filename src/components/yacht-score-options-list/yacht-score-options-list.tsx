@@ -43,7 +43,9 @@ export const YachtScoreOptionsList = component$<YachtScoreOptionsListProps>(
 						<div class="w-10 text-right">{o.Score}</div>
 					</div>
 				))}
-				<button onClick$={scoreTurn}>Score Turn</button>
+				<button onClick$={scoreTurn} class="mt-2">
+					Score Turn
+				</button>
 			</div>
 		)
 	}

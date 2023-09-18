@@ -5,7 +5,7 @@ import {
 	useStore,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import { YachtScoreCard } from '~/components/yacht-score-card/yacht-score-card'
 import { YachtScoreOptionsList } from '~/components/yacht-score-options-list/yacht-score-options-list'
 import { YachtTurnDisplay } from '~/components/yacht-turn-display/yacht-turn-display'
@@ -139,7 +139,9 @@ export default component$(() => {
 							disabled={flags.rollTwo}
 						/>
 					) : (
-						<button onClick$={firstRoll}>First Roll</button>
+						<button onClick$={firstRoll} class="my-2">
+							First Roll
+						</button>
 					)}
 					{turn.value.RollTwo && (
 						<YachtTurnDisplay
@@ -202,3 +204,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Yacht',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

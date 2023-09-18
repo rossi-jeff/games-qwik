@@ -5,7 +5,7 @@ import {
 	useVisibleTask$,
 	useStore,
 } from '@builder.io/qwik'
-import { Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import { HangManDrawing } from '~/components/hang-man-drawing/hang-man-drawing'
 import { HangManLetters } from '~/components/hang-man-letters/hang-man-letters'
 import {
@@ -162,3 +162,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Hang Man',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

@@ -8,7 +8,7 @@ import {
 	type NoSerialize,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import type { CardContainerType } from '../../types/card-container.type'
 import { Deck } from '../../lib/deck.class'
 import { PlayingCard } from '../../components/playing-card/playing-card'
@@ -881,3 +881,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Free Cell',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

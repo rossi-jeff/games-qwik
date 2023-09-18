@@ -5,7 +5,7 @@ import {
 	useStore,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { Link } from '@builder.io/qwik-city'
+import { type DocumentHead, Link } from '@builder.io/qwik-city'
 import { CodeBreakerGuessForm } from '~/components/code-breaker-guess-form/code-breaker-guess-form'
 import { CodeBreakerGuessList } from '~/components/code-breaker-guess-list/code-breaker-guess-list'
 import {
@@ -147,3 +147,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Code Breaker',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}
