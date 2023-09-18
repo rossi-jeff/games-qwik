@@ -7,7 +7,7 @@ import {
 	type QwikMouseEvent,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { Link } from '@builder.io/qwik-city'
+import { DocumentHead, Link } from '@builder.io/qwik-city'
 import { PlayingCard } from '~/components/playing-card/playing-card'
 import { Card } from '~/lib/card.class'
 import { Deck } from '~/lib/deck.class'
@@ -234,7 +234,7 @@ export default component$(() => {
 
 	return (
 		<div>
-			<div class="flex flex-wrap justify-between">
+			<div class="flex flex-wrap justify-between mb-4">
 				<div>
 					{game.value.Status != GameStatus.Playing && (
 						<button class="mr-4" onClick$={deal}>
@@ -292,3 +292,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Concentration',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

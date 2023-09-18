@@ -18,11 +18,14 @@ export default component$(() => {
 						<a href="https://qwik.builder.io/" target="_blank">
 							Qwik
 						</a>{' '}
-						- Qwik is a new kind of web framework that can deliver instant
-						loading web applications at any size or complexity. Your sites and
-						apps can boot with about 1kb of JS (regardless of application
-						complexity), and achieve consistent performance at scale (site
-						documentation)
+						-{' '}
+						<i>
+							Qwik is a new kind of web framework that can deliver instant
+							loading web applications at any size or complexity. Your sites and
+							apps can boot with about 1kb of JS (regardless of application
+							complexity), and achieve consistent performance at scale
+						</i>{' '}
+						(site documentation)
 					</li>
 					<li>
 						<a href="https://tailwindcss.com/">Tailwind CSS</a> -
@@ -30,14 +33,14 @@ export default component$(() => {
 							A utility-first CSS framework packed with classes like flex, pt-4,
 							text-center and rotate-90 that can be composed to build any
 							design, directly in your markup.
-						</i>
+						</i>{' '}
 						(site documentation)
 					</li>
 					<li>
 						Dice images downloaded from <a href="https://css.gg/">CSS.GG</a>
 					</li>
 					<li>
-						Playing Card images downloaded from
+						Playing Card images downloaded from{' '}
 						<a href="https://tekeye.uk/playing_cards/svg-playing-cards">
 							Tek Eye
 						</a>
@@ -49,7 +52,7 @@ export default component$(() => {
 				skills involved in constucting them.
 			</div>
 			<div class="mb-2">
-				The register and sign in dialogs serve two purposes:
+				The register and sign in dialogs serve three purposes:
 				<ul>
 					<li>proof of concept for user management</li>
 					<li>scores will show a username rather than anonymous</li>
@@ -66,11 +69,11 @@ export default component$(() => {
 })
 
 export const head: DocumentHead = {
-	title: 'Welcome to Qwik',
+	title: 'Games by Jeff Rossi',
 	meta: [
 		{
 			name: 'description',
-			content: 'Qwik site description',
+			content: 'Games by Jeff Rossi',
 		},
 	],
 }

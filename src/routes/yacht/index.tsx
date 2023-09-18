@@ -5,7 +5,7 @@ import {
 	useStore,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { Link } from '@builder.io/qwik-city'
+import { DocumentHead, Link } from '@builder.io/qwik-city'
 import { YachtScoreCard } from '~/components/yacht-score-card/yacht-score-card'
 import { YachtScoreOptionsList } from '~/components/yacht-score-options-list/yacht-score-options-list'
 import { YachtTurnDisplay } from '~/components/yacht-turn-display/yacht-turn-display'
@@ -204,3 +204,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Yacht',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

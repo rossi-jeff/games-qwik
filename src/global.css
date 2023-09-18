@@ -32,6 +32,10 @@ button:hover {
 	@apply underline;
 }
 
+button:disabled {
+	@apply bg-teal-green text-dk-green;
+}
+
 a:hover {
 	@apply underline;
 }

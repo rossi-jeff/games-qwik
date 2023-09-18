@@ -6,7 +6,7 @@ import {
 	useTask$,
 	useVisibleTask$,
 } from '@builder.io/qwik'
-import { Link } from '@builder.io/qwik-city'
+import { DocumentHead, Link } from '@builder.io/qwik-city'
 import type { GuessWord } from '../../types/guess-word.type'
 import { GuessWordOptions } from '../../components/guess-word-options/guess-word-options'
 import type { Word } from '../../types/word.type'
@@ -228,3 +228,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Guess Word',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

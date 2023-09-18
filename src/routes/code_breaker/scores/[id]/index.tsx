@@ -1,5 +1,5 @@
 import { component$, useSignal, useTask$ } from '@builder.io/qwik'
-import { Link, useLocation } from '@builder.io/qwik-city'
+import { DocumentHead, Link, useLocation } from '@builder.io/qwik-city'
 import type { CodeBreaker } from '../../../../types/code-breaker.type'
 import { RestClient } from '../../../../lib/rest-client'
 import { CodeBreakerGuessList } from '../../../../components/code-breaker-guess-list/code-breaker-guess-list'
@@ -27,3 +27,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Code Breaker',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

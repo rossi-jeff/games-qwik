@@ -1,5 +1,5 @@
 import { component$, useSignal, useStore, useTask$, $ } from '@builder.io/qwik'
-import { Link, useLocation } from '@builder.io/qwik-city'
+import { DocumentHead, Link, useLocation } from '@builder.io/qwik-city'
 import type { SeaBattle } from '../../../../types/sea-battle.type'
 import type { SeaBattleShip } from '../../../../types/sea-batte-ship.type'
 import type { SeaBattleTurn } from '../../../../types/sea-battle-turn.type'
@@ -86,3 +86,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Sea Battle',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

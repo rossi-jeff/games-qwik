@@ -1,5 +1,5 @@
 import { component$, useSignal, useTask$ } from '@builder.io/qwik'
-import { Link, useLocation } from '@builder.io/qwik-city'
+import { DocumentHead, Link, useLocation } from '@builder.io/qwik-city'
 import type { GuessWord } from '../../../../types/guess-word.type'
 import { GuessWordGuessList } from '../../../../components/guess-word-guess-list/guess-word-guess-list'
 import { GuessWordSolution } from '../../../../components/guess-word-solution/guess-word-solution'
@@ -27,3 +27,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Guess Word',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}

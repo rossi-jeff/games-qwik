@@ -2,7 +2,7 @@ import { component$, useSignal, useTask$, $ } from '@builder.io/qwik'
 import type { GuessWord } from '../../../types/guess-word.type'
 import { RestClient } from '../../../lib/rest-client'
 import { PaginationControls } from '~/components/pagination-controls/pagination-controls'
-import { Link } from '@builder.io/qwik-city'
+import { DocumentHead, Link } from '@builder.io/qwik-city'
 
 export default component$(() => {
 	const path = 'api/guess_word'
@@ -85,3 +85,13 @@ export default component$(() => {
 		</div>
 	)
 })
+
+export const head: DocumentHead = {
+	title: 'Games by Jeff Rossi | Guess Word',
+	meta: [
+		{
+			name: 'description',
+			content: 'Games by Jeff Rossi',
+		},
+	],
+}
